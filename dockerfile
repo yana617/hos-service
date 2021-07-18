@@ -2,7 +2,7 @@ FROM node:14.17.0
 LABEL maintainer="jana.ru.sidorova@yandex.ru"
 ENV NODE_ENV=production PORT=1082
 
-WORKDIR /usr/src/hos-serive
+WORKDIR /usr/src/hos-service
 
 COPY package*.json ./
 
