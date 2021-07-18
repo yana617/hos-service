@@ -21,4 +21,8 @@ app.use(express.json({ limit: '10mb' }));
 
 app.use(require('./src/routes'));
 
+app.get('/', (req, res) => {
+  res.send('HELLO FROM HOS SERVICE');
+});
+
 module.exports = app;
