@@ -1,11 +1,13 @@
 const { checkSchema } = require('express-validator');
 
+const { ERRORS } = require('../translates');
+
 module.exports = checkSchema({
   title: {
     in: ['body'],
     isString: true,
     isLength: {
-      errorMessage: 'Title should be from 2 to 100 characters',
+      errorMessage: ERRORS.NOTICE_INVALID_TITLE,
       options: { min: 2, max: 100 },
     },
     exists: true,
@@ -14,7 +16,7 @@ module.exports = checkSchema({
     in: ['body'],
     isString: true,
     isLength: {
-      errorMessage: 'Description should be from 50 to 500 characters',
+      errorMessage: ERRORS.NOTICE_INVALID_DESCRIPTION,
       options: { min: 50, max: 500 },
     },
     exists: true,

@@ -1,4 +1,0 @@
-exports.type = [
-  'morning',
-  'evening',
-];
