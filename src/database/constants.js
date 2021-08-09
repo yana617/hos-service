@@ -1,0 +1,4 @@
+exports.type = [
+  'morning',
+  'evening',
+];
