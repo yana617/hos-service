@@ -3,29 +3,28 @@ info:
   title: API
   version: 0.0.1
 servers:
-  - url: http://localhost:xxxx/
-    description: Dev server
+  - url: http://localhost:1082/
+    description: Development
+  - url: https://hos-service.dogcatbmpz.by/
+    description: Production
+tags:
+- name: "Notices"
+  description: "CRUD for notices"
 paths:
-  /test:
+  /notices:
     post:
-      summary: Test summary
-      description: Test description
-      parameters:
-        - in: query
-          name: test_query
-          description: Test description
-          required: true
-          schema:
-            type: string
+      summary: Create new notice
+      tags:
+      - "Notices"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/test'
+              $ref: '#/components/schemas/NoticeRequestBody'
       responses:
         '201':
-          description: Test description
+          description: Notice created successfully
           content:
             application/json:
               schema: 
@@ -33,20 +32,120 @@ paths:
                 properties:
                   success:
                     type: boolean
-                  test:
-                    $ref: '#/components/schemas/test'
+                  data:
+                    $ref: '#/components/schemas/Notice'
         '400':
-          description: Client error
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/test'
-              example:
-                success: false
-                error: 'test error'
+                $ref: '#/components/schemas/ValidationError'
+    get:
+      summary: Get ID's of existing notices
+      tags:
+      - "Notices"
+      responses:
+        '200':
+          description: Returns existing notices
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: string
+  /notices/{noticeId}:
+    get:
+      summary: Get existing notice by ID
+      tags:
+      - "Notices"
+      parameters:
+      - name: noticeId
+        in: path
+        description: ID of notice to return
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Returns requested notice
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Notice'
+        '400':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Edit existing notice
+      tags:
+      - "Notices"
+      parameters:
+      - name: noticeId
+        in: path
+        description: ID of notice to edit
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Returns edited notice
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Notice'
+        '400':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete existing notice
+      tags:
+      - "Notices"
+      parameters:
+      - name: noticeId
+        in: path
+        description: ID of notice to delete
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Returns deleted notice
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Notice'
+        '400':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
-    test:
+    Error:
       type: object
       properties:
         success:
@@ -54,3 +153,42 @@ components:
           default: false
         error:
           type: string
+    ValidationError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              msg:
+                type: string
+              param:
+                type: string
+              location: 
+                type: string
+    NoticeRequestBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        authorized:
+          type: boolean
+    Notice:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        authorized:
+          type: boolean

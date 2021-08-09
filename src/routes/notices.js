@@ -59,6 +59,9 @@ route.put('/:id', validateNotice, async (req, res) => {
       { title, description, authorized },
       { new: true },
     );
+    if (!notice) {
+      return res.status(400).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
+    }
     res.json({ success: true, data: notice });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

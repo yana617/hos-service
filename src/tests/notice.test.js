@@ -114,6 +114,17 @@ describe('PUT /notices/:id request', () => {
     const { errors } = response.body;
     expect(errors).not.toBeNull();
   });
+
+  test('Should fail with not found error', async () => {
+    const response = await request(app)
+      .put(`/notices/${noticeOne._id}`)
+      .send(noticeOne)
+      .expect(400);
+
+    const { error } = response.body;
+    expect(error).not.toBeNull();
+    expect(error).toBe(ERRORS.NOTICE_NOT_FOUND);
+  });
 });
 
 describe('DELETE /notices/:id request', () => {
