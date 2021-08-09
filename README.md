@@ -4,3 +4,8 @@
 ```
 docker compose up --build
 ```
+
+### To run tests
+```
+npm run test:docker
+```
