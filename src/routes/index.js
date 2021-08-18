@@ -1,5 +1,7 @@
 const router = require('express').Router();
 
-// router.use('/apps', appRoute);
+const noticesRoute = require('./notices');
+
+router.use('/notices', noticesRoute);
 
 module.exports = router;

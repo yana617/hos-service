@@ -9,3 +9,17 @@ services:
       - /usr/src/hos-service/node_modules
     ports:
       - "1082:1082"
+    links:
+      - mongo-db
+    environment:
+      MONGO_HOSTNAME: mongo-db
+      MONGO_DB: hos-service
+      MONGO_PORT: 27017
+      LANG: RU
+  mongo-db:
+    image: mongo
+    ports:
+      - "27018:27017"
+    container_name: mongo-db
+    volumes:
+      - ./db/:/data/db
