@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const claimRepository = require('../repositories/ClaimRepository');
 const internalService = require('../services/internal');
+const { ERRORS } = require('../translates');
 
 const getClaims = async (req, res) => {
   const errors = validationResult(req);
@@ -88,6 +89,11 @@ const createClaim = async (req, res) => {
 };
 
 const updateClaim = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
+
   try {
     const {
       additional_people,
@@ -95,16 +101,16 @@ const updateClaim = async (req, res) => {
       comment,
       arrival_time,
     } = req.body;
-    const { id: claimId } = req.params;
 
+    const { id: claimId } = req.params;
     const claim = await claimRepository.getById(claimId);
     if (!claim) {
-      return res.status(404).json({ success: false, error: 'Claim not found' });
+      return res.status(404).json({ success: false, error: ERRORS.CLAIM_NOT_FOUND });
     }
 
     const user = await internalService.getUser(req.token);
     if (user.id !== claim.user_id) {
-      return res.status(404).json({ success: false, error: 'Can not update not yours claim' });
+      return res.status(403).json({ success: false, error: ERRORS.UPDATE_NOT_YOURS_CLAIM_ERROR });
     }
 
     const updatedClaim = await claimRepository.update(claimId, {
@@ -119,8 +125,29 @@ const updateClaim = async (req, res) => {
   }
 };
 
+const deleteClaim = async (req, res) => {
+  try {
+    const { id: claimId } = req.params;
+    const claim = await claimRepository.getById(claimId);
+    if (!claim) {
+      return res.status(404).json({ success: false, error: ERRORS.CLAIM_NOT_FOUND });
+    }
+
+    const user = await internalService.getUser(req.token);
+    if (user.id !== claim.user_id) {
+      return res.status(403).json({ success: false, error: ERRORS.DELETE_NOT_YOURS_CLAIM_ERROR });
+    }
+
+    const deletedClaim = await claimRepository.deleteById(claimId);
+    res.json({ success: true, data: deletedClaim });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
 module.exports = {
   getClaims,
   createClaim,
   updateClaim,
+  deleteClaim,
 };

@@ -53,7 +53,7 @@ route.put('/:id', validateNotice, async (req, res) => {
     const { title, description, authorized } = req.body;
     const notice = await noticeRepository.update(id, { title, description, authorized });
     if (!notice) {
-      return res.status(400).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
+      return res.status(404).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
     }
     res.json({ success: true, data: notice });
   } catch (err) {
@@ -67,7 +67,7 @@ route.delete('/:id', async (req, res) => {
     const { id } = req.params;
     const notice = await noticeRepository.deleteById(id);
     if (!notice) {
-      return res.status(400).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
+      return res.status(404).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
     }
     res.json({ success: true, data: notice });
   } catch (err) {

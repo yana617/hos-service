@@ -1,17 +1,17 @@
-get:
-  summary: Get existing notice by ID
+put:
+  summary: Edit existing claim
   tags:
-    - "Notices"
+    - "Claims"
   parameters:
-    - name: noticeId
+    - name: claimId
       in: path
-      description: ID of notice to return
+      description: ID of claim to edit
       required: true
       schema:
         type: string
   responses:
     "200":
-      description: Returns requested notice
+      description: Returns edited claim
       content:
         application/json:
           schema:
@@ -20,37 +20,20 @@ get:
               success:
                 type: boolean
               data:
-                $ref: "../schemas/Notice.yaml"
-    "400":
-      description: Not found error
+                $ref: "../schemas/Claim.yaml"
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+    "403":
+      description: Forbidden when updating not yours
       content:
         application/json:
           schema:
             $ref: "../schemas/Error.yaml"
-put:
-  summary: Edit existing notice
-  tags:
-    - "Notices"
-  parameters:
-    - name: noticeId
-      in: path
-      description: ID of notice to edit
-      required: true
-      schema:
-        type: string
-  responses:
-    "200":
-      description: Returns edited notice
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                $ref: "../schemas/Notice.yaml"
-    "400":
+    "404":
       description: Not found error
       content:
         application/json:
@@ -58,19 +41,19 @@ put:
             $ref: "../schemas/Error.yaml"
 
 delete:
-  summary: Delete existing notice
+  summary: Delete existing claim
   tags:
-    - "Notices"
+    - "Claims"
   parameters:
-    - name: noticeId
+    - name: claimId
       in: path
-      description: ID of notice to delete
+      description: ID of claim to delete
       required: true
       schema:
         type: string
   responses:
     "200":
-      description: Returns deleted notice
+      description: Returns deleted claim
       content:
         application/json:
           schema:
@@ -79,7 +62,7 @@ delete:
               success:
                 type: boolean
               data:
-                $ref: "../schemas/Notice.yaml"
+                $ref: "../schemas/Claim.yaml"
     "404":
       description: Not found error
       content:

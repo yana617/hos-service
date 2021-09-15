@@ -5,9 +5,6 @@ const faker = require('faker');
 const Notice = require('../../models/notice');
 const Claim = require('../../models/claim');
 
-// const { AUTH_SERVICE_URL } = process.env;
-// const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
-
 const generateNotice = () => ({
   _id: new mongoose.Types.ObjectId(),
   title: faker.lorem.words(3),

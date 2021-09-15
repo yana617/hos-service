@@ -149,7 +149,7 @@ paths:
                     type: boolean
                   data:
                     $ref: '#/components/schemas/Notice'
-        '400':
+        '404':
           description: Not found error
           content:
             application/json:
@@ -193,6 +193,77 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationError'
+  '/claims/{claimId}':
+    put:
+      summary: Edit existing claim
+      tags:
+        - Claims
+      parameters:
+        - name: claimId
+          in: path
+          description: ID of claim to edit
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns edited claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Claim'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: Forbidden when updating not yours
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete existing claim
+      tags:
+        - Claims
+      parameters:
+        - name: claimId
+          in: path
+          description: ID of claim to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns deleted claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Claim'
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Error:
@@ -236,6 +307,8 @@ components:
     Claim:
       type: object
       properties:
+        _id:
+          type: string
         user_id:
           type: string
         date:

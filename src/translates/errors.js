@@ -22,6 +22,9 @@ module.exports = {
     GUEST_FIELDS_ERROR: 'Name, surname and phone field must be provided for guest',
     CREATE_NOT_YOURS_CLAIM_ERROR: 'Can not create claim for not yourself',
     FORBIDDEN: 'Forbidden',
+    CLAIM_NOT_FOUND: 'Claim not found',
+    UPDATE_NOT_YOURS_CLAIM_ERROR: 'Can not update not yours claim',
+    DELETE_NOT_YOURS_CLAIM_ERROR: 'Can not delete not yours claim',
   },
   RU: {
     NOTICE_NOT_FOUND: 'Запись не найдена',
@@ -46,5 +49,6 @@ module.exports = {
     GUEST_FIELDS_ERROR: 'Поля имя, фамилия и телефон - обязательны для гостя',
     CREATE_NOT_YOURS_CLAIM_ERROR: 'Записываться в график можно только за себя',
     FORBIDDEN: 'Недостаточно прав',
+    CLAIM_NOT_FOUND: 'Запись не найдена',
   },
 };

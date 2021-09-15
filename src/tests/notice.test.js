@@ -121,7 +121,7 @@ describe('PUT /notices/:id request', () => {
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
       .send(noticeOne)
-      .expect(400);
+      .expect(404);
 
     const { error } = response.body;
     expect(error).not.toBeNull();
@@ -148,7 +148,7 @@ describe('DELETE /notices/:id request', () => {
     const noticeOne = generateNotice();
     const response = await request(app)
       .delete(`/notices/${noticeOne._id}`)
-      .expect(400);
+      .expect(404);
 
     const { error } = response.body;
     expect(error).not.toBeNull();

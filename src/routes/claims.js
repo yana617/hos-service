@@ -16,5 +16,6 @@ route.post('/', authRequired, validateClaim, (req, res, next) => {
   next();
 }, checkUserForClaim, claimController.createClaim);
 route.put('/:id', authRequired, validateClaim, claimController.updateClaim);
+route.delete('/:id', authRequired, claimController.deleteClaim);
 
 module.exports = route;
