@@ -1,0 +1,8 @@
+Error:
+  $ref: "./Error.yaml"
+ValidationError:
+  $ref: "./ValidationError.yaml"
+Notice:
+  $ref: "./Notice.yaml"
+Claim:
+  $ref: "./Claim.yaml"

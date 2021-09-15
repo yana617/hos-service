@@ -1,0 +1,37 @@
+get:
+  summary: Get claims
+  tags:
+  - "Claims"
+  parameters:
+  - name: from
+    in: query
+    description: date from which to return
+    required: false
+    schema:
+      type: string
+  - name: to
+    in: query
+    description: date from which to return
+    required: false
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Returns claims filtered by from & to parameters
+      content:
+        application/json:
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: array
+                items:
+                  $ref: "../schemas/Claim.yaml"
+    '400':
+      description: Fails when from or to parameters are invalid
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"

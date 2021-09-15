@@ -1,0 +1,24 @@
+openapi: 3.0.0
+info:
+  title: API
+  version: 1.0.0
+servers:
+  - url: http://localhost:1082/
+    description: Development
+  - url: https://hos-service.dogcatbmpz.by/
+    description: Production
+tags:
+  - name: Notices
+    description: CRUD for notices
+  - name: Claims
+    description: CRUD for claims
+paths:
+  /notices:
+    $ref: "./paths/notices.yaml"
+  /notices/{noticeId}:
+    $ref: "./paths/notice.yaml"
+  /claims:
+    $ref: "./paths/claims.yaml"
+components:
+  schemas:
+    $ref: "./schemas/index.yaml"

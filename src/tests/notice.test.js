@@ -1,11 +1,7 @@
 const request = require('supertest');
 
 const Notice = require('../models/notice');
-const {
-  noticeOne,
-  noticeTwo,
-  setupDatabase,
-} = require('./fixtures/db');
+const { generateNotice, setupDatabase } = require('./fixtures/db');
 const app = require('../../app');
 const { ERRORS } = require('../translates');
 
@@ -13,8 +9,8 @@ beforeEach(setupDatabase);
 
 describe('GET /notices request', () => {
   test('Should return correct notices ids', async () => {
-    await new Notice(noticeOne).save();
-    await new Notice(noticeTwo).save();
+    await new Notice(generateNotice()).save();
+    await new Notice(generateNotice()).save();
 
     const response = await request(app)
       .get('/notices')
@@ -36,6 +32,7 @@ describe('GET /notices request', () => {
 
 describe('GET /notices/:id request', () => {
   test('Should return correct notice', async () => {
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const response = await request(app)
@@ -48,6 +45,7 @@ describe('GET /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    const noticeOne = generateNotice();
     const response = await request(app)
       .get(`/notices/${noticeOne._id}`)
       .expect(400);
@@ -60,6 +58,7 @@ describe('GET /notices/:id request', () => {
 
 describe('POST /notices request', () => {
   test('Should save notice', async () => {
+    const noticeOne = generateNotice();
     const response = await request(app)
       .post('/notices')
       .send(noticeOne)
@@ -73,7 +72,7 @@ describe('POST /notices request', () => {
   });
 
   test('Should fail because of invalid title', async () => {
-    const noticeToSave = { ...noticeOne, title: '' };
+    const noticeToSave = { ...generateNotice(), title: '' };
     const response = await request(app)
       .post('/notices')
       .send(noticeToSave)
@@ -86,6 +85,7 @@ describe('POST /notices request', () => {
 
 describe('PUT /notices/:id request', () => {
   test('Should edit notice correctly', async () => {
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const editedTitle = 'Edited';
@@ -103,6 +103,7 @@ describe('PUT /notices/:id request', () => {
   });
 
   test('Should fail because of invalid title', async () => {
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const noticeToUpdate = { ...noticeOne, title: '' };
@@ -116,6 +117,7 @@ describe('PUT /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    const noticeOne = generateNotice();
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
       .send(noticeOne)
@@ -129,6 +131,7 @@ describe('PUT /notices/:id request', () => {
 
 describe('DELETE /notices/:id request', () => {
   test('Should delete notice correctly', async () => {
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const response = await request(app)
@@ -142,6 +145,7 @@ describe('DELETE /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    const noticeOne = generateNotice();
     const response = await request(app)
       .delete(`/notices/${noticeOne._id}`)
       .expect(400);
