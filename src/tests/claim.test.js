@@ -9,8 +9,12 @@ const { ERRORS } = require('../translates');
 
 const { AUTH_SERVICE_URL } = process.env;
 const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const userId = '9d2d4fde-d439-4b92-9b41-208f2327200b';
 
-beforeEach(setupDatabase);
+beforeEach(async () => {
+  await setupDatabase();
+  nock.cleanAll();
+});
 
 describe('GET /claims request', () => {
   beforeEach(() => {
@@ -95,7 +99,149 @@ describe('GET /claims request', () => {
   });
 });
 
-const userId = 'my id';
+describe('POST /claims/ request', () => {
+  test('Should create claim successfully', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId } });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'valid token')
+      .send(claimOne)
+      .expect(200);
+
+    const { data: claim } = response.body;
+    expect(claim).toHaveProperty('type', claimOne.type);
+    const claimInDB = await Claim.findById(claim._id);
+    expect(claimInDB).not.toBeNull();
+    expect(claimInDB).toHaveProperty('type', claimOne.type);
+  });
+
+  test('Should create guest claim successfully', async () => {
+    const guestId = new mongoose.Types.ObjectId();
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId } });
+    nock(baseUrl).post('/guest').reply(200, { success: true, data: { id: guestId } });
+    nock(baseUrl).get('/permissions/me').reply(200, {
+      success: true,
+      data: ['CREATE_CLAIM', 'CREATE_CLAIM_FOR_UNREGISTERED_USERS'],
+    });
+    const claimOne = {
+      ...generateClaim(),
+      user_id: userId,
+      guest: {
+        phone: '375291111111',
+        name: 'test',
+        surname: 'test',
+      },
+    };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'valid token')
+      .send(claimOne)
+      .expect(200);
+
+    const { data: claim } = response.body;
+    expect(claim).toHaveProperty('type', claimOne.type);
+    const claimInDB = await Claim.findById(claim._id);
+    expect(claimInDB).not.toBeNull();
+    expect(claimInDB).toHaveProperty('type', claimOne.type);
+    expect(claimInDB).toHaveProperty('guest_id', guestId.toString());
+  });
+
+  test('Should fail without auth', async () => {
+    nock(baseUrl).get('/auth').reply(401, { success: false });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send(claimOne)
+      .expect(401);
+
+    const { error } = response.body;
+    expect(error).toBe(ERRORS.AUTH_REQUIRED);
+  });
+
+  test('Should fail with validation errors', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send({ ...claimOne, type: 'invalid' })
+      .expect(400);
+
+    const { errors } = response.body;
+    expect(errors).toBeDefined();
+  });
+
+  test('Should fail with validation errors', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send({ ...claimOne, date: null })
+      .expect(400);
+
+    const { errors } = response.body;
+    expect(errors).toBeDefined();
+  });
+
+  test('Should fail with guest validation errors', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId } });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send({ ...claimOne, guest: { name: 'guest' } })
+      .expect(400);
+
+    const { error } = response.body;
+    expect(error).toBe(ERRORS.GUEST_FIELDS_ERROR);
+  });
+
+  test('Should fail with not yours error', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: 'not yours' } });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send(claimOne)
+      .expect(403);
+
+    const { error } = response.body;
+    expect(error).toBe(ERRORS.CREATE_NOT_YOURS_CLAIM_ERROR);
+  });
+
+  test('Should fail with not enough permissions for guest creation', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId } });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    const claimOne = { ...generateClaim(), user_id: userId };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send({ ...claimOne, guest: { phone: '375291111111' } })
+      .expect(403);
+
+    const { error } = response.body;
+    expect(error).toBe(ERRORS.FORBIDDEN);
+  });
+});
+
 describe('PUT /claims/:claimId request', () => {
   beforeEach(() => {
     nock(baseUrl)

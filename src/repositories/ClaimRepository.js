@@ -16,6 +16,12 @@ class ClaimRepository extends BaseRepository {
       },
     }).lean();
   }
+
+  async getClaimsByUserId(userId) {
+    return this.model.find({
+      user_id: userId,
+    });
+  }
 }
 
 module.exports = new ClaimRepository(Claim);

@@ -1,26 +1,26 @@
 get:
   summary: Get claims
   tags:
-  - "Claims"
+    - "Claims"
   parameters:
-  - name: from
-    in: query
-    description: date from which to return
-    required: false
-    schema:
-      type: string
-  - name: to
-    in: query
-    description: date from which to return
-    required: false
-    schema:
-      type: string
+    - name: from
+      in: query
+      description: date from which to return
+      required: false
+      schema:
+        type: string
+    - name: to
+      in: query
+      description: date from which to return
+      required: false
+      schema:
+        type: string
   responses:
-    '200':
+    "200":
       description: Returns claims filtered by from & to parameters
       content:
         application/json:
-          schema: 
+          schema:
             type: object
             properties:
               success:
@@ -29,9 +29,72 @@ get:
                 type: array
                 items:
                   $ref: "../schemas/Claim.yaml"
-    '400':
+    "400":
       description: Fails when from or to parameters are invalid
       content:
         application/json:
           schema:
             $ref: "../schemas/ValidationError.yaml"
+post:
+  summary: Create new claim
+  tags:
+    - "Claims"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user_id:
+              type: string
+            date:
+              type: string
+            type:
+              type: string
+              enum: [morning, evening]
+            arrival_time:
+              type: string
+            additional_people:
+              type: integer
+            comment:
+              type: string
+            questionable:
+              type: boolean
+            guest:
+              type: object
+              properties:
+                name:
+                  type: string
+                surname:
+                  type: string
+                phone:
+                  type: string
+          required:
+            - user_id
+            - date
+            - type
+  responses:
+    "200":
+      description: Returns new claim
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                $ref: "../schemas/Claim.yaml"
+    "400":
+      description: Fails with validation errors
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+    "403":
+      description: Fails with not enough permissions, not yours
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"

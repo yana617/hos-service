@@ -59,4 +59,5 @@ test('Should work correctly if token provided and request returns success true',
   const next = jest.fn();
   await authRequired(request, response, next);
   expect(next).toHaveBeenCalledTimes(1);
+  nock.cleanAll();
 });

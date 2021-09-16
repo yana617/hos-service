@@ -4,9 +4,10 @@ const { validationResult } = require('express-validator');
 const validateNotice = require('../middlewares/validateNotice');
 const { ERRORS } = require('../translates');
 const noticeRepository = require('../repositories/NoticeRepository');
+const authRequired = require('../middlewares/authRequired');
+const checkPermissions = require('../middlewares/checkPermissions');
 
-// TO-DO verify admin
-route.post('/', validateNotice, async (req, res) => {
+route.post('/', authRequired, checkPermissions(['CREATE_NOTICE']), validateNotice, async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -42,8 +43,7 @@ route.get('/', async (req, res) => {
   }
 });
 
-// TO-DO verify admin
-route.put('/:id', validateNotice, async (req, res) => {
+route.put('/:id', authRequired, checkPermissions(['EDIT_NOTICE']), validateNotice, async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -61,8 +61,7 @@ route.put('/:id', validateNotice, async (req, res) => {
   }
 });
 
-// TO-DO verify admin
-route.delete('/:id', async (req, res) => {
+route.delete('/:id', authRequired, checkPermissions(['DELETE_NOTICE']), async (req, res) => {
   try {
     const { id } = req.params;
     const notice = await noticeRepository.deleteById(id);

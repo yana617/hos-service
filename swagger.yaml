@@ -193,6 +193,71 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationError'
+    post:
+      summary: Create new claim
+      tags:
+        - Claims
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                date:
+                  type: string
+                type:
+                  type: string
+                  enum:
+                    - morning
+                    - evening
+                arrival_time:
+                  type: string
+                additional_people:
+                  type: integer
+                comment:
+                  type: string
+                questionable:
+                  type: boolean
+                guest:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    surname:
+                      type: string
+                    phone:
+                      type: string
+              required:
+                - user_id
+                - date
+                - type
+      responses:
+        '200':
+          description: Returns new claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Claim'
+        '400':
+          description: Fails with validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '403':
+          description: 'Fails with not enough permissions, not yours'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   '/claims/{claimId}':
     put:
       summary: Edit existing claim
@@ -260,6 +325,38 @@ paths:
                     $ref: '#/components/schemas/Claim'
         '404':
           description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/users/{userId}/claims':
+    get:
+      summary: Get claims for one user
+      tags:
+        - Claims
+      parameters:
+        - name: userId
+          in: path
+          description: user id which claims to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns claims for one user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Claim'
+        '401':
+          description: Auth required
           content:
             application/json:
               schema:

@@ -1,11 +1,18 @@
 const request = require('supertest');
+const nock = require('nock');
 
 const Notice = require('../models/notice');
 const { generateNotice, setupDatabase } = require('./fixtures/db');
 const app = require('../../app');
 const { ERRORS } = require('../translates');
 
-beforeEach(setupDatabase);
+const { AUTH_SERVICE_URL } = process.env;
+const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+
+beforeEach(async () => {
+  await setupDatabase();
+  nock.cleanAll();
+});
 
 describe('GET /notices request', () => {
   test('Should return correct notices ids', async () => {
@@ -58,9 +65,12 @@ describe('GET /notices/:id request', () => {
 
 describe('POST /notices request', () => {
   test('Should save notice', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_NOTICE'] });
     const noticeOne = generateNotice();
     const response = await request(app)
       .post('/notices')
+      .set('x-access-token', 'valid token')
       .send(noticeOne)
       .expect(200);
 
@@ -72,9 +82,12 @@ describe('POST /notices request', () => {
   });
 
   test('Should fail because of invalid title', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_NOTICE'] });
     const noticeToSave = { ...generateNotice(), title: '' };
     const response = await request(app)
       .post('/notices')
+      .set('x-access-token', 'valid token')
       .send(noticeToSave)
       .expect(400);
 
@@ -85,12 +98,15 @@ describe('POST /notices request', () => {
 
 describe('PUT /notices/:id request', () => {
   test('Should edit notice correctly', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['EDIT_NOTICE'] });
     const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const editedTitle = 'Edited';
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .send({ ...noticeOne, title: editedTitle })
       .expect(200);
 
@@ -103,12 +119,15 @@ describe('PUT /notices/:id request', () => {
   });
 
   test('Should fail because of invalid title', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['EDIT_NOTICE'] });
     const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const noticeToUpdate = { ...noticeOne, title: '' };
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .send(noticeToUpdate)
       .expect(400);
 
@@ -117,9 +136,12 @@ describe('PUT /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['EDIT_NOTICE'] });
     const noticeOne = generateNotice();
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .send(noticeOne)
       .expect(404);
 
@@ -131,11 +153,14 @@ describe('PUT /notices/:id request', () => {
 
 describe('DELETE /notices/:id request', () => {
   test('Should delete notice correctly', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['DELETE_NOTICE'] });
     const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const response = await request(app)
       .delete(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .expect(200);
 
     const { data: notice } = response.body;
@@ -145,9 +170,12 @@ describe('DELETE /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['DELETE_NOTICE'] });
     const noticeOne = generateNotice();
     const response = await request(app)
       .delete(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .expect(404);
 
     const { error } = response.body;

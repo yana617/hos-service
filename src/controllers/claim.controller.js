@@ -59,7 +59,7 @@ const createClaim = async (req, res) => {
     } = req.body;
 
     if (guest && (!guest.name || !guest.surname || !guest.phone)) {
-      return res.status(400).json({ success: false, error: 'Name, surname and phone field must be provided for guest' });
+      return res.status(400).json({ success: false, error: ERRORS.GUEST_FIELDS_ERROR });
     }
 
     let guestInfo = {};

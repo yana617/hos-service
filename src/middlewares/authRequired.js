@@ -14,6 +14,6 @@ module.exports = async (req, res, next) => {
 
     next();
   } catch (err) {
-    res.status(401).json({ success: false, error: ERRORS.AUTH_REQUIRED });
+    return res.status(401).json({ success: false, error: ERRORS.AUTH_REQUIRED });
   }
 };

@@ -21,6 +21,8 @@ paths:
     $ref: "./paths/claims.yaml"
   /claims/{claimId}:
     $ref: "./paths/claim.yaml"
+  /users/{userId}/claims:
+    $ref: "./paths/claims-user.yaml"
 components:
   schemas:
     $ref: "./schemas/index.yaml"
