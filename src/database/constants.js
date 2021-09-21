@@ -3,8 +3,8 @@ exports.historyActionTypes = [
   'DELETE_CLAIM',
   'EDIT_ROLE',
   'NEW_USER',
-  'ADMIN_CREATE_CLAIM',
-  'ADMIN_DELETE_CLAIM',
+  'ADMIN_CREATE_GUEST_CLAIM',
+  'ADMIN_DELETE_GUEST_CLAIM',
 ];
 
 exports.claimTypes = [

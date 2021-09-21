@@ -1,29 +1,28 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const mongoose = require('mongoose');
+const faker = require('faker');
 
 const Notice = require('../../models/notice');
+const HistoryAction = require('../../models/historyAction');
 
-const noticeOneId = new mongoose.Types.ObjectId();
-const noticeTwoId = new mongoose.Types.ObjectId();
+const generateNotice = () => ({
+  _id: new mongoose.Types.ObjectId(),
+  title: faker.lorem.words(3),
+  description: faker.lorem.words(15),
+  authorized: faker.datatype.boolean(),
+});
 
-const noticeOne = {
-  _id: noticeOneId,
-  title: 'We need your help',
-  description: 'We have a lot of debt on our bills, we really need help paying off the debt!',
-  authorized: true,
-};
-const noticeTwo = {
-  _id: noticeTwoId,
-  title: 'We need your help, please',
-  description: 'Pay the rent soon, we need to collect the entire amount in a short time.',
-  authorized: false,
-};
+const generateHistoryAction = (action_type = 'CREATE_CLAIM') => ({
+  _id: new mongoose.Types.ObjectId(),
+  action_type,
+});
 
 const setupDatabase = async () => {
-  await Promise.all([Notice.deleteMany()]);
+  await Promise.all([Notice.deleteMany(), HistoryAction.deleteMany()]);
 };
 
 module.exports = {
   setupDatabase,
-  noticeOne,
-  noticeTwo,
+  generateNotice,
+  generateHistoryAction,
 };
