@@ -4,8 +4,10 @@ properties:
     type: string
   user_id:
     type: string
+    format: uuid
   date:
     type: string
+    format: date-time
   type:
     type: string
     enum: [morning, evening]
@@ -19,3 +21,4 @@ properties:
     type: boolean
   guest_id:
     type: string
+    format: uuid

@@ -1,21 +1,17 @@
 const route = require('express').Router();
-const { validationResult } = require('express-validator');
 
-const validateClaim = require('../middlewares/validateClaim');
+const validateClaim = require('../middlewares/validations/validateClaim');
+const checkValidationErrors = require('../middlewares/checkValidation');
 const checkUserForClaim = require('../middlewares/checkUserForClaim');
 const claimController = require('../controllers/claim.controller');
 const authRequired = require('../middlewares/authRequired');
-const validateClaimsQueries = require('../middlewares/validateClaimsQueries');
+const validateClaimsQueries = require('../middlewares/validations/validateClaimsQueries');
+const errorHandler = require('../middlewares/errorHandler');
 
-route.get('/', validateClaimsQueries, claimController.getClaims);
-route.post('/', authRequired, validateClaim, (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, errors: errors.array() });
-  }
-  next();
-}, checkUserForClaim, claimController.createClaim);
-route.put('/:id', authRequired, validateClaim, claimController.updateClaim);
-route.delete('/:id', authRequired, claimController.deleteClaim);
+route.get('/', validateClaimsQueries, checkValidationErrors, errorHandler(claimController.getClaims));
+route.post('/', authRequired, validateClaim, checkValidationErrors, checkUserForClaim,
+  errorHandler(claimController.createClaim));
+route.put('/:id', authRequired, validateClaim, checkValidationErrors, errorHandler(claimController.updateClaim));
+route.delete('/:id', authRequired, errorHandler(claimController.deleteClaim));
 
 module.exports = route;

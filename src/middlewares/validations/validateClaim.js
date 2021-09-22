@@ -1,7 +1,7 @@
 const { checkSchema } = require('express-validator');
 
-const { claimTypes } = require('../database/constants');
-const { ERRORS } = require('../translates');
+const { claimTypes } = require('../../database/constants');
+const { ERRORS } = require('../../translates');
 
 module.exports = checkSchema({
   date: {

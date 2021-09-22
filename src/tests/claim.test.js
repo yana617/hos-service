@@ -3,7 +3,12 @@ const nock = require('nock');
 const mongoose = require('mongoose');
 
 const Claim = require('../models/claim');
-const { generateClaim, setupDatabase } = require('./fixtures/db');
+const {
+  generateClaim,
+  generateUser,
+  setupDatabase,
+  generateGuest,
+} = require('./fixtures/db');
 const app = require('../../app');
 const { ERRORS } = require('../translates');
 
@@ -96,6 +101,24 @@ describe('GET /claims request', () => {
 
     const { errors } = response.body;
     expect(errors).toBeDefined();
+  });
+
+  test('Should successfully set users', async () => {
+    const userOne = generateUser();
+    const guestOne = generateGuest();
+    nock.cleanAll();
+    nock(baseUrl).post('/users').reply(200, { success: true, data: [userOne] });
+    nock(baseUrl).post('/guests').reply(200, { success: true, data: [guestOne] });
+
+    await new Claim({ ...generateClaim(), user_id: userOne.id }).save();
+    await new Claim({ ...generateClaim(), guest_id: guestOne.id }).save();
+
+    const response = await request(app)
+      .get('/claims')
+      .expect(200);
+
+    const { data: claims } = response.body;
+    expect(claims.length).toBe(2);
   });
 });
 

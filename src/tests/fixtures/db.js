@@ -1,9 +1,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const mongoose = require('mongoose');
 const faker = require('faker');
+const { v4 } = require('uuid');
 
 const Notice = require('../../models/notice');
 const Claim = require('../../models/claim');
+
+const generateGuest = () => ({
+  id: v4(),
+  name: faker.internet.userName(),
+  surname: faker.internet.userName(),
+  phone: `37529${faker.datatype.number({ min: 1111111, max: 9999999 })}`,
+});
+
+const generateUser = () => ({
+  ...generateGuest(),
+  email: faker.internet.email(),
+  birthday: new Date(),
+});
 
 const generateNotice = () => ({
   _id: new mongoose.Types.ObjectId(),
@@ -16,7 +30,7 @@ const generateClaim = (date) => ({
   _id: new mongoose.Types.ObjectId(),
   date: date ? new Date(date) : new Date(),
   type: 'morning',
-  user_id: 'c45ea315-068b-4646-9775-8d3f31219d51',
+  user_id: v4(),
 });
 
 const setupDatabase = async () => {
@@ -27,5 +41,6 @@ module.exports = {
   setupDatabase,
   generateNotice,
   generateClaim,
-  // baseUrl,
+  generateUser,
+  generateGuest,
 };

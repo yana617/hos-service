@@ -1,14 +1,29 @@
+parameters:
+  - name: claimId
+    in: path
+    description: ID of claim
+    required: true
+    schema:
+      type: string
 put:
   summary: Edit existing claim
   tags:
     - "Claims"
-  parameters:
-    - name: claimId
-      in: path
-      description: ID of claim to edit
-      required: true
-      schema:
-        type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            arrival_time:
+              type: string
+            additional_people:
+              type: integer
+            comment:
+              type: string
+            questionable:
+              type: boolean
   responses:
     "200":
       description: Returns edited claim
@@ -21,7 +36,7 @@ put:
                 type: boolean
               data:
                 $ref: "../schemas/Claim.yaml"
-    '400':
+    "400":
       description: Validation error
       content:
         application/json:
@@ -39,18 +54,10 @@ put:
         application/json:
           schema:
             $ref: "../schemas/Error.yaml"
-
 delete:
   summary: Delete existing claim
   tags:
     - "Claims"
-  parameters:
-    - name: claimId
-      in: path
-      description: ID of claim to delete
-      required: true
-      schema:
-        type: string
   responses:
     "200":
       description: Returns deleted claim

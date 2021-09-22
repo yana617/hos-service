@@ -1,14 +1,14 @@
+parameters:
+  - name: noticeId
+    in: path
+    description: ID of notice
+    required: true
+    schema:
+      type: string
 get:
   summary: Get existing notice by ID
   tags:
     - "Notices"
-  parameters:
-    - name: noticeId
-      in: path
-      description: ID of notice to return
-      required: true
-      schema:
-        type: string
   responses:
     "200":
       description: Returns requested notice
@@ -21,7 +21,7 @@ get:
                 type: boolean
               data:
                 $ref: "../schemas/Notice.yaml"
-    "400":
+    "404":
       description: Not found error
       content:
         application/json:
@@ -31,13 +31,19 @@ put:
   summary: Edit existing notice
   tags:
     - "Notices"
-  parameters:
-    - name: noticeId
-      in: path
-      description: ID of notice to edit
-      required: true
-      schema:
-        type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+            authorized:
+              type: boolean
   responses:
     "200":
       description: Returns edited notice
@@ -51,35 +57,24 @@ put:
               data:
                 $ref: "../schemas/Notice.yaml"
     "400":
+      description: Validation errors
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+    "404":
       description: Not found error
       content:
         application/json:
           schema:
             $ref: "../schemas/Error.yaml"
-
 delete:
   summary: Delete existing notice
   tags:
     - "Notices"
-  parameters:
-    - name: noticeId
-      in: path
-      description: ID of notice to delete
-      required: true
-      schema:
-        type: string
   responses:
     "200":
-      description: Returns deleted notice
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                $ref: "../schemas/Notice.yaml"
+      description: Notice successfully deleted
     "404":
       description: Not found error
       content:

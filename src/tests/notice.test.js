@@ -55,7 +55,7 @@ describe('GET /notices/:id request', () => {
     const noticeOne = generateNotice();
     const response = await request(app)
       .get(`/notices/${noticeOne._id}`)
-      .expect(400);
+      .expect(404);
 
     const { error } = response.body;
     expect(error).not.toBeNull();
@@ -158,13 +158,11 @@ describe('DELETE /notices/:id request', () => {
     const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
-    const response = await request(app)
+    await request(app)
       .delete(`/notices/${noticeOne._id}`)
       .set('x-access-token', 'valid token')
-      .expect(200);
+      .expect(204);
 
-    const { data: notice } = response.body;
-    expect(notice).not.toBeNull();
     const noticeInDB = await Notice.findById(noticeOne._id);
     expect(noticeInDB).toBeNull();
   });

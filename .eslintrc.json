@@ -36,6 +36,12 @@
     ],
     "no-use-before-define": "warn",
     "prefer-destructuring": "warn",
-    "camelcase": "off"
+    "camelcase": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none"
+      }
+    ]
   }
 }

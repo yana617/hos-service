@@ -24,4 +24,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use(setToken);
 app.use(require('./src/routes'));
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ success: false, error: err.message });
+});
+
 module.exports = app;
