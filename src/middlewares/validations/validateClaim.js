@@ -22,6 +22,9 @@ module.exports = checkSchema({
   },
   user_id: {
     in: ['body'],
+    isUUID: {
+      errorMessage: 'user_id must be a uuid',
+    },
     isLength: {
       errorMessage: ERRORS.INVALID_USER_ID,
       options: { min: 36, max: 36 },

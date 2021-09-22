@@ -184,7 +184,61 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Claim'
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        user_id:
+                          type: string
+                          format: uuid
+                        date:
+                          type: string
+                          format: date-time
+                        type:
+                          type: string
+                          enum:
+                            - morning
+                            - evening
+                        arrival_time:
+                          type: string
+                        additional_people:
+                          type: integer
+                        comment:
+                          type: string
+                        questionable:
+                          type: boolean
+                        guest_id:
+                          type: string
+                          format: uuid
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                            surname:
+                              type: string
+                            phone:
+                              type: string
+                            email:
+                              type: string
+                            birthday:
+                              type: string
+                              format: date-time
+                        guest:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                            surname:
+                              type: string
+                            phone:
+                              type: string
         '400':
           description: Fails when from or to parameters are invalid
           content:

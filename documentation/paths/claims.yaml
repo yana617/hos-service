@@ -28,7 +28,34 @@ get:
               data:
                 type: array
                 items:
-                  $ref: "../schemas/Claim.yaml"
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    user_id:
+                      type: string
+                      format: uuid
+                    date:
+                      type: string
+                      format: date-time
+                    type:
+                      type: string
+                      enum: [morning, evening]
+                    arrival_time:
+                      type: string
+                    additional_people:
+                      type: integer
+                    comment:
+                      type: string
+                    questionable:
+                      type: boolean
+                    guest_id:
+                      type: string
+                      format: uuid
+                    user:
+                      $ref: "../schemas/User.yaml"
+                    guest:
+                      $ref: "../schemas/Guest.yaml"
     "400":
       description: Fails when from or to parameters are invalid
       content:

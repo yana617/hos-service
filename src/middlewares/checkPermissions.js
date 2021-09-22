@@ -12,6 +12,6 @@ module.exports = (permissions) => async (req, res, next) => {
     }
     next();
   } catch (err) {
-    res.status(403).json({ success: false, error: ERRORS.FORBIDDEN });
+    res.status(500).json({ success: false, error: ERRORS.FORBIDDEN });
   }
 };
