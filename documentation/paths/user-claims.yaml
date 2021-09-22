@@ -1,7 +1,7 @@
 get:
   summary: Get claims for one user
   tags:
-    - "Claims"
+    - "Users"
   parameters:
     - name: userId
       in: path

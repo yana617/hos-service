@@ -12,6 +12,8 @@ tags:
     description: CRUD for notices
   - name: Claims
     description: CRUD for claims
+  - name: Users
+    description: User additional information
 paths:
   /notices:
     post:
@@ -143,7 +145,7 @@ paths:
       tags:
         - Notices
       responses:
-        '200':
+        '204':
           description: Notice successfully deleted
         '404':
           description: Not found error
@@ -264,7 +266,7 @@ paths:
         required: true
         schema:
           type: string
-    put:
+    patch:
       summary: Edit existing claim
       tags:
         - Claims
@@ -318,17 +320,8 @@ paths:
       tags:
         - Claims
       responses:
-        '200':
-          description: Returns deleted claim
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/Claim'
+        '204':
+          description: Claim successfully deleted
         '404':
           description: Not found error
           content:
@@ -339,7 +332,7 @@ paths:
     get:
       summary: Get claims for one user
       tags:
-        - Claims
+        - Users
       parameters:
         - name: userId
           in: path

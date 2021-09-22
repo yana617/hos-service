@@ -11,7 +11,7 @@ const errorHandler = require('../middlewares/errorHandler');
 route.get('/', validateClaimsQueries, checkValidationErrors, errorHandler(claimController.getClaims));
 route.post('/', authRequired, validateClaim, checkValidationErrors, checkUserForClaim,
   errorHandler(claimController.createClaim));
-route.put('/:id', authRequired, validateClaim, checkValidationErrors, errorHandler(claimController.updateClaim));
+route.patch('/:id', authRequired, validateClaim, checkValidationErrors, errorHandler(claimController.updateClaim));
 route.delete('/:id', authRequired, errorHandler(claimController.deleteClaim));
 
 module.exports = route;

@@ -5,7 +5,7 @@ parameters:
     required: true
     schema:
       type: string
-put:
+patch:
   summary: Edit existing claim
   tags:
     - "Claims"
@@ -59,17 +59,8 @@ delete:
   tags:
     - "Claims"
   responses:
-    "200":
-      description: Returns deleted claim
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              data:
-                $ref: "../schemas/Claim.yaml"
+    "204":
+      description: Claim successfully deleted
     "404":
       description: Not found error
       content:

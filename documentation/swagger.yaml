@@ -12,6 +12,8 @@ tags:
     description: CRUD for notices
   - name: Claims
     description: CRUD for claims
+  - name: Users
+    description: User additional information
 paths:
   /notices:
     $ref: "./paths/notices.yaml"
@@ -22,7 +24,7 @@ paths:
   /claims/{claimId}:
     $ref: "./paths/claim.yaml"
   /users/{userId}/claims:
-    $ref: "./paths/claims-user.yaml"
+    $ref: "./paths/user-claims.yaml"
 components:
   schemas:
     $ref: "./schemas/index.yaml"

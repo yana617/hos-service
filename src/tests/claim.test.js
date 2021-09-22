@@ -265,7 +265,7 @@ describe('POST /claims/ request', () => {
   });
 });
 
-describe('PUT /claims/:claimId request', () => {
+describe('PATCH /claims/:claimId request', () => {
   beforeEach(() => {
     nock(baseUrl)
       .get('/auth')
@@ -284,7 +284,7 @@ describe('PUT /claims/:claimId request', () => {
 
     const editedArrivalTime = '15:30';
     const response = await request(app)
-      .put(`/claims/${claimOne._id}`)
+      .patch(`/claims/${claimOne._id}`)
       .set('x-access-token', 'valid token')
       .send({ ...claimOne, arrival_time: editedArrivalTime })
       .expect(200);
@@ -302,7 +302,7 @@ describe('PUT /claims/:claimId request', () => {
     await new Claim({ ...claimOne, user_id: userId }).save();
 
     const response = await request(app)
-      .put(`/claims/${claimOne._id}`)
+      .patch(`/claims/${claimOne._id}`)
       .set('x-access-token', 'valid token')
       .send({ ...claimOne, arrival_time: 1000 })
       .expect(400);
@@ -316,7 +316,7 @@ describe('PUT /claims/:claimId request', () => {
     await new Claim({ ...claimOne, user_id: userId }).save();
 
     const response = await request(app)
-      .put(`/claims/${claimOne._id}`)
+      .patch(`/claims/${claimOne._id}`)
       .set('x-access-token', 'valid token')
       .send({ ...claimOne, comment: '1' })
       .expect(400);
@@ -331,7 +331,7 @@ describe('PUT /claims/:claimId request', () => {
 
     const unExistedId = new mongoose.Types.ObjectId();
     const response = await request(app)
-      .put(`/claims/${unExistedId}`)
+      .patch(`/claims/${unExistedId}`)
       .set('x-access-token', 'valid token')
       .send(claimOne)
       .expect(404);
@@ -346,7 +346,7 @@ describe('PUT /claims/:claimId request', () => {
     await new Claim({ ...claimOne, user_id: userId }).save();
 
     const response = await request(app)
-      .put(`/claims/${claimOne._id}`)
+      .patch(`/claims/${claimOne._id}`)
       .set('x-access-token', 'valid token')
       .send(claimOne)
       .expect(403);
@@ -373,13 +373,11 @@ describe('DELETE /claims/:claimId request', () => {
     const claimOne = generateClaim();
     await new Claim({ ...claimOne, user_id: userId }).save();
 
-    const response = await request(app)
+    await request(app)
       .delete(`/claims/${claimOne._id}`)
       .set('x-access-token', 'valid token')
-      .expect(200);
+      .expect(204);
 
-    const { data: claim } = response.body;
-    expect(claim).toHaveProperty('type', claimOne.type);
     const claimInDB = await Claim.findById(claimOne._id);
     expect(claimInDB).toBeNull();
   });

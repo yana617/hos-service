@@ -113,8 +113,8 @@ const deleteClaim = async (req, res) => {
     return res.status(403).json({ success: false, error: ERRORS.DELETE_NOT_YOURS_CLAIM_ERROR });
   }
 
-  const deletedClaim = await claimRepository.deleteById(claimId);
-  res.json({ success: true, data: deletedClaim });
+  await claimRepository.deleteById(claimId);
+  res.status(204).send();
 };
 
 module.exports = {

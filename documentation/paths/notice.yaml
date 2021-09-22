@@ -73,7 +73,7 @@ delete:
   tags:
     - "Notices"
   responses:
-    "200":
+    "204":
       description: Notice successfully deleted
     "404":
       description: Not found error
