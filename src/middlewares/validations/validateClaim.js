@@ -65,6 +65,15 @@ module.exports = checkSchema({
       errorMessage: ERRORS.GUEST_FIELD_ERROR,
       bail: true,
     },
+    custom: {
+      errorMessage: ERRORS.GUEST_FIELDS_ERROR,
+      options: (guest) => {
+        if (guest && (!guest.name || !guest.surname || !guest.phone)) {
+          return false;
+        }
+        return true;
+      },
+    },
     optional: { options: { nullable: true } },
   },
   'guest.name': {

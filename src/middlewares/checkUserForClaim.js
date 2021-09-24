@@ -1,4 +1,5 @@
-const { getUser, getPermissions } = require('../services/internal');
+const { getUser } = require('../services/internal');
+const checkPermissions = require('./checkPermissions');
 const { ERRORS } = require('../translates');
 
 module.exports = async (req, res, next) => {
@@ -9,18 +10,12 @@ module.exports = async (req, res, next) => {
     if (user_id !== user.id) {
       return res.status(403).json({ success: false, error: ERRORS.CREATE_NOT_YOURS_CLAIM_ERROR });
     }
-    const permissions = await getPermissions(req.token);
-    if (!permissions.includes('CREATE_CLAIM')) {
-      return res.status(403).json({ success: false, error: ERRORS.FORBIDDEN });
+    const permissionsToCheck = ['CREATE_CLAIM'];
+    if (phone) {
+      permissionsToCheck.push('CREATE_CLAIM_FOR_UNREGISTERED_USERS');
     }
-
-    // guest
-    if (phone && !permissions.includes('CREATE_CLAIM_FOR_UNREGISTERED_USERS')) {
-      return res.status(403).json({ success: false, error: ERRORS.FORBIDDEN });
-    }
+    await checkPermissions(permissionsToCheck)(req, res, () => next());
   } catch (e) {
     return res.status(500).json({ success: false, error: e.message });
   }
-
-  next();
 };

@@ -46,10 +46,6 @@ const createClaim = async (req, res) => {
     guest,
   } = req.body;
 
-  if (guest && (!guest.name || !guest.surname || !guest.phone)) {
-    return res.status(400).json({ success: false, error: ERRORS.GUEST_FIELDS_ERROR });
-  }
-
   let guestInfo = {};
   if (guest && guest.phone) {
     guestInfo = await internalService.getOrCreateGuest(req.token, {

@@ -9,6 +9,8 @@ patch:
   summary: Edit existing claim
   tags:
     - "Claims"
+  security:
+  - AccessTokenAuth: [] 
   requestBody:
     required: true
     content:
@@ -42,6 +44,12 @@ patch:
         application/json:
           schema:
             $ref: "../schemas/ValidationError.yaml"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
     "403":
       description: Forbidden when updating not yours
       content:
@@ -58,9 +66,17 @@ delete:
   summary: Delete existing claim
   tags:
     - "Claims"
+  security:
+  - AccessTokenAuth: [] 
   responses:
     "204":
       description: Claim successfully deleted
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
     "404":
       description: Not found error
       content:

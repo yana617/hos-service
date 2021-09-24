@@ -229,8 +229,8 @@ describe('POST /claims/ request', () => {
       .send({ ...claimOne, guest: { name: 'guest' } })
       .expect(400);
 
-    const { error } = response.body;
-    expect(error).toBe(ERRORS.GUEST_FIELDS_ERROR);
+    const { errors } = response.body;
+    expect(errors).toBeDefined();
   });
 
   test('Should fail with not yours error', async () => {
@@ -257,7 +257,7 @@ describe('POST /claims/ request', () => {
     const response = await request(app)
       .post('/claims')
       .set('x-access-token', 'invalid token')
-      .send({ ...claimOne, guest: { phone: '375291111111' } })
+      .send({ ...claimOne, guest: { name: 'Name', surname: 'Surname', phone: '375291111111' } })
       .expect(403);
 
     const { error } = response.body;

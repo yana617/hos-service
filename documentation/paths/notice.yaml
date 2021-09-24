@@ -31,6 +31,8 @@ put:
   summary: Edit existing notice
   tags:
     - "Notices"
+  security:
+  - AccessTokenAuth: [] 
   requestBody:
     required: true
     content:
@@ -72,9 +74,17 @@ delete:
   summary: Delete existing notice
   tags:
     - "Notices"
+  security:
+  - AccessTokenAuth: [] 
   responses:
     "204":
       description: Notice successfully deleted
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
     "404":
       description: Not found error
       content:

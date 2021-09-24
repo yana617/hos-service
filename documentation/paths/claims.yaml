@@ -66,6 +66,8 @@ post:
   summary: Create new claim
   tags:
     - "Claims"
+  security:
+  - AccessTokenAuth: [] 
   requestBody:
     required: true
     content:
@@ -121,6 +123,12 @@ post:
         application/json:
           schema:
             $ref: "../schemas/ValidationError.yaml"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
     "403":
       description: Fails with not enough permissions, not yours
       content:

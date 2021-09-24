@@ -2,6 +2,8 @@ post:
   summary: Create new notice
   tags:
   - "Notices"
+  security:
+  - AccessTokenAuth: [] 
   requestBody:
     required: true
     content:
@@ -33,6 +35,12 @@ post:
         application/json:
           schema:
             $ref: "../schemas/ValidationError.yaml"
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
 get:
   summary: Get ID's of existing notices
   tags:

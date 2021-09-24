@@ -26,5 +26,10 @@ paths:
   /users/{userId}/claims:
     $ref: "./paths/user-claims.yaml"
 components:
+  securitySchemes:
+    AccessTokenAuth:
+      type: apiKey
+      in: header
+      name: x-access-token
   schemas:
     $ref: "./schemas/index.yaml"
