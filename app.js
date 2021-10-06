@@ -9,7 +9,7 @@ const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml'));
 
 const app = express();
 
-const whitelist = ['http://localhost:8080'];
+const whitelist = ['http://localhost:8080', 'https://house-of-souls.dogcatbmpz.by', 'https://auth-service.dogcatbmpz.by'];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1) {
@@ -24,7 +24,7 @@ const corsOptions = {
 };
 
 if (process.env.NODE_ENV !== 'test') {
-  app.use(cors(corsOptions));
+  // app.use(cors(corsOptions));
 }
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

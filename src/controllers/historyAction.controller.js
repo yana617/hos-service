@@ -1,19 +1,10 @@
-const { validationResult } = require('express-validator');
-
+const { emitter } = require('../utils/historyActionEmitter');
 const historyActionRepository = require('../repositories/HistoryActionRepository');
 
 const createAction = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
-    const newHistoryAction = await historyActionRepository.create(req.body);
-
-    const { io } = req.app;
-    io.emit('newAction', newHistoryAction);
-
-    res.json({ success: true, data: newHistoryAction });
+    emitter.emit('newHistoryAction', req.body);
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

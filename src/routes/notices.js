@@ -1,7 +1,7 @@
 const route = require('express').Router();
 const { validationResult } = require('express-validator');
 
-const validateNotice = require('../middlewares/validateNotice');
+const validateNotice = require('../middlewares/validations/validateNotice');
 const { ERRORS } = require('../translates');
 const noticeRepository = require('../repositories/NoticeRepository');
 

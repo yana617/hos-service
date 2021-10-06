@@ -1,7 +1,7 @@
 const { checkSchema } = require('express-validator');
 
-const { historyActionTypes, claimTypes } = require('../database/constants');
-const { ERRORS } = require('../translates');
+const { historyActionTypes, claimTypes } = require('../../database/constants');
+const { ERRORS } = require('../../translates');
 
 module.exports = checkSchema({
   action_type: {
