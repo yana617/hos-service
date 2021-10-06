@@ -19,11 +19,11 @@ const generateUser = () => ({
   birthday: new Date(),
 });
 
-const generateNotice = () => ({
+const generateNotice = (internalOnly = faker.datatype.boolean()) => ({
   _id: new mongoose.Types.ObjectId(),
   title: faker.lorem.words(3),
   description: faker.lorem.words(15),
-  authorized: faker.datatype.boolean(),
+  internalOnly,
 });
 
 const generateClaim = (date) => ({

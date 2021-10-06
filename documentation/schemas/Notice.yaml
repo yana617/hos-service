@@ -6,5 +6,5 @@ properties:
     type: string
   description:
     type: string
-  authorized:
+  internalOnly:
     type: boolean

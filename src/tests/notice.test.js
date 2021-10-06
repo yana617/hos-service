@@ -16,6 +16,7 @@ beforeEach(async () => {
 
 describe('GET /notices request', () => {
   test('Should return correct notices ids', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
     await new Notice(generateNotice()).save();
     await new Notice(generateNotice()).save();
 
@@ -28,12 +29,39 @@ describe('GET /notices request', () => {
   });
 
   test('Should return empty array', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
     const response = await request(app)
       .get('/notices')
       .expect(200);
 
     const { data: notices } = response.body;
     expect(notices.length).toBe(0);
+  });
+
+  test('Should return correct notices', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    await new Notice(generateNotice(false)).save();
+    await new Notice(generateNotice(true)).save();
+
+    const response = await request(app)
+      .get('/notices')
+      .expect(200);
+
+    const { data: notices } = response.body;
+    expect(notices.length).toBe(2);
+  });
+
+  test('Should return correct notices', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: [] });
+    await new Notice(generateNotice(false)).save();
+    await new Notice(generateNotice(true)).save();
+
+    const response = await request(app)
+      .get('/notices')
+      .expect(200);
+
+    const { data: notices } = response.body;
+    expect(notices.length).toBe(1);
   });
 });
 

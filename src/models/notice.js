@@ -11,9 +11,10 @@ const noticeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  authorized: {
+  internalOnly: {
     type: Boolean,
     required: true,
+    default: false,
   },
 }, {
   timestamps: true,
