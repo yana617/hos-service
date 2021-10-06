@@ -33,7 +33,7 @@ paths:
                   type: string
                 description:
                   type: string
-                authorized:
+                internalOnly:
                   type: boolean
       responses:
         '201':
@@ -124,7 +124,7 @@ paths:
                   type: string
                 description:
                   type: string
-                authorized:
+                internalOnly:
                   type: boolean
       responses:
         '200':
@@ -501,7 +501,7 @@ components:
           type: string
         description:
           type: string
-        authorized:
+        internalOnly:
           type: boolean
     Claim:
       type: object

@@ -19,7 +19,7 @@ module.exports = checkSchema({
     },
     exists: true,
   },
-  authorized: {
+  internalOnly: {
     in: ['body'],
     isBoolean: true,
     exists: true,

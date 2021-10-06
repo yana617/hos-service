@@ -44,7 +44,7 @@ put:
               type: string
             description:
               type: string
-            authorized:
+            internalOnly:
               type: boolean
   responses:
     "200":

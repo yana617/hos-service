@@ -36,7 +36,7 @@
     "express-validator": "^6.12.1",
     "got": "^9.6.0",
     "js-yaml": "^4.1.0",
-    "mongoose": "^5.13.5",
+    "mongoose": "^6.0.9",
     "morgan": "^1.10.0",
     "supertest": "^6.1.4",
     "swagger-ui-express": "^4.1.6"
