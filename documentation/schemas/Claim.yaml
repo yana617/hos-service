@@ -1,0 +1,24 @@
+type: object
+properties:
+  _id:
+    type: string
+  user_id:
+    type: string
+    format: uuid
+  date:
+    type: string
+    format: date-time
+  type:
+    type: string
+    enum: [morning, evening]
+  arrival_time:
+    type: string
+  additional_people:
+    type: integer
+  comment:
+    type: string
+  questionable:
+    type: boolean
+  guest_id:
+    type: string
+    format: uuid

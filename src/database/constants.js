@@ -1,0 +1,4 @@
+exports.claimTypes = [
+  'morning',
+  'evening',
+];

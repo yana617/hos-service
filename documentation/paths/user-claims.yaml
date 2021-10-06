@@ -1,0 +1,33 @@
+get:
+  summary: Get claims for one user
+  tags:
+    - "Users"
+  security:
+  - AccessTokenAuth: [] 
+  parameters:
+    - name: userId
+      in: path
+      description: user id which claims to return
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Returns claims for one user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: array
+                items:
+                  $ref: "../schemas/Claim.yaml"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"

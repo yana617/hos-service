@@ -1,11 +1,10 @@
 const { checkSchema } = require('express-validator');
 
-const { ERRORS } = require('../translates');
+const { ERRORS } = require('../../translates');
 
 module.exports = checkSchema({
   title: {
     in: ['body'],
-    isString: true,
     isLength: {
       errorMessage: ERRORS.NOTICE_INVALID_TITLE,
       options: { min: 2, max: 100 },
@@ -14,7 +13,6 @@ module.exports = checkSchema({
   },
   description: {
     in: ['body'],
-    isString: true,
     isLength: {
       errorMessage: ERRORS.NOTICE_INVALID_DESCRIPTION,
       options: { min: 50, max: 500 },
