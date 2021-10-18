@@ -1,33 +1,46 @@
 openapi: 3.0.0
 info:
   title: API
-  version: 0.0.1
+  version: 1.0.0
 servers:
-  - url: http://localhost:1082/
+  - url: 'http://localhost:1082/'
     description: Development
-  - url: https://hos-service.dogcatbmpz.by/
+  - url: 'https://hos-service.dogcatbmpz.by/'
     description: Production
 tags:
-- name: "Notices"
-  description: "CRUD for notices"
+  - name: Notices
+    description: CRUD for notices
+  - name: Claims
+    description: CRUD for claims
+  - name: Users
+    description: User additional information
 paths:
   /notices:
     post:
       summary: Create new notice
       tags:
-      - "Notices"
+        - Notices
+      security:
+        - AccessTokenAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NoticeRequestBody'
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                internalOnly:
+                  type: boolean
       responses:
         '201':
           description: Notice created successfully
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   success:
@@ -40,16 +53,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     get:
       summary: Get ID's of existing notices
       tags:
-      - "Notices"
+        - Notices
       responses:
         '200':
           description: Returns existing notices
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   success:
@@ -58,30 +77,31 @@ paths:
                     type: array
                     items:
                       type: string
-  /notices/{noticeId}:
+  '/notices/{noticeId}':
+    parameters:
+      - name: noticeId
+        in: path
+        description: ID of notice
+        required: true
+        schema:
+          type: string
     get:
       summary: Get existing notice by ID
       tags:
-      - "Notices"
-      parameters:
-      - name: noticeId
-        in: path
-        description: ID of notice to return
-        required: true
-        type: string
+        - Notices
       responses:
         '200':
           description: Returns requested notice
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   success:
                     type: boolean
                   data:
                     $ref: '#/components/schemas/Notice'
-        '400':
+        '404':
           description: Not found error
           content:
             application/json:
@@ -90,19 +110,28 @@ paths:
     put:
       summary: Edit existing notice
       tags:
-      - "Notices"
-      parameters:
-      - name: noticeId
-        in: path
-        description: ID of notice to edit
+        - Notices
+      security:
+        - AccessTokenAuth: []
+      requestBody:
         required: true
-        type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                internalOnly:
+                  type: boolean
       responses:
         '200':
           description: Returns edited notice
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
                   success:
@@ -110,6 +139,12 @@ paths:
                   data:
                     $ref: '#/components/schemas/Notice'
         '400':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
           description: Not found error
           content:
             application/json:
@@ -118,32 +153,317 @@ paths:
     delete:
       summary: Delete existing notice
       tags:
-      - "Notices"
-      parameters:
-      - name: noticeId
-        in: path
-        description: ID of notice to delete
-        required: true
-        type: string
+        - Notices
+      security:
+        - AccessTokenAuth: []
       responses:
-        '200':
-          description: Returns deleted notice
+        '204':
+          description: Notice successfully deleted
+        '401':
+          description: Unauthorized
           content:
             application/json:
-              schema: 
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/Notice'
-        '400':
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
           description: Not found error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /claims:
+    get:
+      summary: Get claims
+      tags:
+        - Claims
+      parameters:
+        - name: from
+          in: query
+          description: date from which to return
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: date from which to return
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns claims filtered by from & to parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        user_id:
+                          type: string
+                          format: uuid
+                        date:
+                          type: string
+                          format: date-time
+                        type:
+                          type: string
+                          enum:
+                            - morning
+                            - evening
+                        arrival_time:
+                          type: string
+                        additional_people:
+                          type: integer
+                        comment:
+                          type: string
+                        questionable:
+                          type: boolean
+                        guest_id:
+                          type: string
+                          format: uuid
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                            surname:
+                              type: string
+                            phone:
+                              type: string
+                            email:
+                              type: string
+                            birthday:
+                              type: string
+                              format: date-time
+                        guest:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                            surname:
+                              type: string
+                            phone:
+                              type: string
+        '400':
+          description: Fails when from or to parameters are invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+    post:
+      summary: Create new claim
+      tags:
+        - Claims
+      security:
+        - AccessTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                date:
+                  type: string
+                  format: date-time
+                type:
+                  type: string
+                  enum:
+                    - morning
+                    - evening
+                arrival_time:
+                  type: string
+                additional_people:
+                  type: integer
+                comment:
+                  type: string
+                questionable:
+                  type: boolean
+                guest:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    surname:
+                      type: string
+                    phone:
+                      type: string
+              required:
+                - user_id
+                - date
+                - type
+      responses:
+        '200':
+          description: Returns new claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Claim'
+        '400':
+          description: Fails with validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: 'Fails with not enough permissions, not yours'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/claims/{claimId}':
+    parameters:
+      - name: claimId
+        in: path
+        description: ID of claim
+        required: true
+        schema:
+          type: string
+    patch:
+      summary: Edit existing claim
+      tags:
+        - Claims
+      security:
+        - AccessTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                arrival_time:
+                  type: string
+                additional_people:
+                  type: integer
+                comment:
+                  type: string
+                questionable:
+                  type: boolean
+      responses:
+        '200':
+          description: Returns edited claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Claim'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden when updating not yours
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete existing claim
+      tags:
+        - Claims
+      security:
+        - AccessTokenAuth: []
+      responses:
+        '204':
+          description: Claim successfully deleted
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/users/{userId}/claims':
+    get:
+      summary: Get claims for one user
+      tags:
+        - Users
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: user id which claims to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns claims for one user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Claim'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
+  securitySchemes:
+    AccessTokenAuth:
+      type: apiKey
+      in: header
+      name: x-access-token
   schemas:
     Error:
       type: object
@@ -170,17 +490,8 @@ components:
                 type: string
               param:
                 type: string
-              location: 
+              location:
                 type: string
-    NoticeRequestBody:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        authorized:
-          type: boolean
     Notice:
       type: object
       properties:
@@ -190,5 +501,32 @@ components:
           type: string
         description:
           type: string
-        authorized:
+        internalOnly:
           type: boolean
+    Claim:
+      type: object
+      properties:
+        _id:
+          type: string
+        user_id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum:
+            - morning
+            - evening
+        arrival_time:
+          type: string
+        additional_people:
+          type: integer
+        comment:
+          type: string
+        questionable:
+          type: boolean
+        guest_id:
+          type: string
+          format: uuid

@@ -1,0 +1,85 @@
+parameters:
+  - name: claimId
+    in: path
+    description: ID of claim
+    required: true
+    schema:
+      type: string
+patch:
+  summary: Edit existing claim
+  tags:
+    - "Claims"
+  security:
+  - AccessTokenAuth: [] 
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            arrival_time:
+              type: string
+            additional_people:
+              type: integer
+            comment:
+              type: string
+            questionable:
+              type: boolean
+  responses:
+    "200":
+      description: Returns edited claim
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                $ref: "../schemas/Claim.yaml"
+    "400":
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+    "403":
+      description: Forbidden when updating not yours
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+    "404":
+      description: Not found error
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+delete:
+  summary: Delete existing claim
+  tags:
+    - "Claims"
+  security:
+  - AccessTokenAuth: [] 
+  responses:
+    "204":
+      description: Claim successfully deleted
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+    "404":
+      description: Not found error
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"

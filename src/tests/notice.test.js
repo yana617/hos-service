@@ -1,20 +1,24 @@
 const request = require('supertest');
+const nock = require('nock');
 
 const Notice = require('../models/notice');
-const {
-  noticeOne,
-  noticeTwo,
-  setupDatabase,
-} = require('./fixtures/db');
+const { generateNotice, setupDatabase } = require('./fixtures/db');
 const app = require('../../app');
 const { ERRORS } = require('../translates');
 
-beforeEach(setupDatabase);
+const { AUTH_SERVICE_URL } = process.env;
+const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+
+beforeEach(async () => {
+  await setupDatabase();
+  nock.cleanAll();
+});
 
 describe('GET /notices request', () => {
   test('Should return correct notices ids', async () => {
-    await new Notice(noticeOne).save();
-    await new Notice(noticeTwo).save();
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    await new Notice(generateNotice()).save();
+    await new Notice(generateNotice()).save();
 
     const response = await request(app)
       .get('/notices')
@@ -25,6 +29,7 @@ describe('GET /notices request', () => {
   });
 
   test('Should return empty array', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
     const response = await request(app)
       .get('/notices')
       .expect(200);
@@ -32,10 +37,37 @@ describe('GET /notices request', () => {
     const { data: notices } = response.body;
     expect(notices.length).toBe(0);
   });
+
+  test('Should return correct notices', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    await new Notice(generateNotice(false)).save();
+    await new Notice(generateNotice(true)).save();
+
+    const response = await request(app)
+      .get('/notices')
+      .expect(200);
+
+    const { data: notices } = response.body;
+    expect(notices.length).toBe(2);
+  });
+
+  test('Should return correct notices', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: [] });
+    await new Notice(generateNotice(false)).save();
+    await new Notice(generateNotice(true)).save();
+
+    const response = await request(app)
+      .get('/notices')
+      .expect(200);
+
+    const { data: notices } = response.body;
+    expect(notices.length).toBe(1);
+  });
 });
 
 describe('GET /notices/:id request', () => {
   test('Should return correct notice', async () => {
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const response = await request(app)
@@ -48,9 +80,10 @@ describe('GET /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    const noticeOne = generateNotice();
     const response = await request(app)
       .get(`/notices/${noticeOne._id}`)
-      .expect(400);
+      .expect(404);
 
     const { error } = response.body;
     expect(error).not.toBeNull();
@@ -60,8 +93,12 @@ describe('GET /notices/:id request', () => {
 
 describe('POST /notices request', () => {
   test('Should save notice', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_NOTICE'] });
+    const noticeOne = generateNotice();
     const response = await request(app)
       .post('/notices')
+      .set('x-access-token', 'valid token')
       .send(noticeOne)
       .expect(200);
 
@@ -73,9 +110,12 @@ describe('POST /notices request', () => {
   });
 
   test('Should fail because of invalid title', async () => {
-    const noticeToSave = { ...noticeOne, title: '' };
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_NOTICE'] });
+    const noticeToSave = { ...generateNotice(), title: '' };
     const response = await request(app)
       .post('/notices')
+      .set('x-access-token', 'valid token')
       .send(noticeToSave)
       .expect(400);
 
@@ -86,11 +126,15 @@ describe('POST /notices request', () => {
 
 describe('PUT /notices/:id request', () => {
   test('Should edit notice correctly', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['EDIT_NOTICE'] });
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const editedTitle = 'Edited';
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .send({ ...noticeOne, title: editedTitle })
       .expect(200);
 
@@ -103,11 +147,15 @@ describe('PUT /notices/:id request', () => {
   });
 
   test('Should fail because of invalid title', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['EDIT_NOTICE'] });
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
     const noticeToUpdate = { ...noticeOne, title: '' };
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .send(noticeToUpdate)
       .expect(400);
 
@@ -116,10 +164,14 @@ describe('PUT /notices/:id request', () => {
   });
 
   test('Should fail with not found error', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['EDIT_NOTICE'] });
+    const noticeOne = generateNotice();
     const response = await request(app)
       .put(`/notices/${noticeOne._id}`)
+      .set('x-access-token', 'valid token')
       .send(noticeOne)
-      .expect(400);
+      .expect(404);
 
     const { error } = response.body;
     expect(error).not.toBeNull();
@@ -129,22 +181,28 @@ describe('PUT /notices/:id request', () => {
 
 describe('DELETE /notices/:id request', () => {
   test('Should delete notice correctly', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['DELETE_NOTICE'] });
+    const noticeOne = generateNotice();
     await new Notice(noticeOne).save();
 
-    const response = await request(app)
+    await request(app)
       .delete(`/notices/${noticeOne._id}`)
-      .expect(200);
+      .set('x-access-token', 'valid token')
+      .expect(204);
 
-    const { data: notice } = response.body;
-    expect(notice).not.toBeNull();
     const noticeInDB = await Notice.findById(noticeOne._id);
     expect(noticeInDB).toBeNull();
   });
 
   test('Should fail with not found error', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['DELETE_NOTICE'] });
+    const noticeOne = generateNotice();
     const response = await request(app)
       .delete(`/notices/${noticeOne._id}`)
-      .expect(400);
+      .set('x-access-token', 'valid token')
+      .expect(404);
 
     const { error } = response.body;
     expect(error).not.toBeNull();

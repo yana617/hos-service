@@ -1,0 +1,61 @@
+post:
+  summary: Create new notice
+  tags:
+  - "Notices"
+  security:
+  - AccessTokenAuth: [] 
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+            internalOnly:
+              type: boolean
+  responses:
+    '201':
+      description: Notice created successfully
+      content:
+        application/json:
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                $ref: '../schemas/Notice.yaml'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ValidationError.yaml"
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+get:
+  summary: Get ID's of existing notices
+  tags:
+  - "Notices"
+  responses:
+    '200':
+      description: Returns existing notices
+      content:
+        application/json:
+          schema: 
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: array
+                items:
+                  type: string

@@ -1,0 +1,10 @@
+type: object
+properties:
+  _id:
+    type: string
+  title:
+    type: string
+  description:
+    type: string
+  internalOnly:
+    type: boolean
