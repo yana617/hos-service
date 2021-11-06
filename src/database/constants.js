@@ -11,3 +11,5 @@ exports.claimTypes = [
   'morning',
   'evening',
 ];
+
+exports.DEFAULT_LIMIT = 15;

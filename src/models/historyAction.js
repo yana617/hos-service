@@ -8,10 +8,14 @@ const historyActionSchema = new mongoose.Schema({
     enum: historyActionTypes,
     required: true,
   },
-  user_from: {
+  user_from_id: {
+    type: String,
+    required: true,
+  },
+  user_to_id: {
     type: String,
   },
-  user_to: {
+  guest_to_id: {
     type: String,
   },
   new_role: {
@@ -27,5 +31,26 @@ const historyActionSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+historyActionSchema.statics = {
+  async getAllFiltered({ skip, limit }) {
+    return this.aggregate([
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      { $skip: parseInt(skip, 10) },
+      { $limit: parseInt(limit, 10) },
+    ]);
+  },
+};
+
+historyActionSchema.methods = {
+  toJSON() {
+    const historyAction = this.toObject();
+    return historyAction;
+  },
+};
 
 module.exports = mongoose.model('HistoryAction', historyActionSchema);

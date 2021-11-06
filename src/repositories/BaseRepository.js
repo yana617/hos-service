@@ -25,6 +25,10 @@ class BaseRepository {
   deleteById(id) {
     return this.model.findByIdAndRemove(id);
   }
+
+  count() {
+    return this.model.find().estimatedDocumentCount();
+  }
 }
 
 module.exports = BaseRepository;

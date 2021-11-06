@@ -11,7 +11,7 @@ const generateNotice = () => ({
   _id: new mongoose.Types.ObjectId(),
   title: faker.lorem.words(3),
   description: faker.lorem.words(15),
-  authorized: faker.datatype.boolean(),
+  internalOnly: faker.datatype.boolean(),
 });
 
 const generateHistoryAction = (action_type = 'CREATE_CLAIM') => ({

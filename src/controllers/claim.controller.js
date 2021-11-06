@@ -1,35 +1,25 @@
 const claimRepository = require('../repositories/ClaimRepository');
-const internalService = require('../services/internal');
+const authServiceApi = require('../api/authService');
 const { ERRORS } = require('../translates');
+const historyActionsService = require('../services/historyAction');
+const internalService = require('../services/internal');
 
 const getClaims = async (req, res) => {
   const { from, to } = req.query;
   const claims = await claimRepository.getWithFilters({ from, to });
   const usersIds = claims.map((claim) => claim.user_id);
-  const guestIds = claims.reduce((result, claim) => {
+  const guestsIds = claims.reduce((result, claim) => {
     if (claim.guest_id) {
       result.push(claim.guest_id);
     }
     return result;
   }, []);
-
-  const users = await internalService.getUsersByIds(req.token, usersIds);
-  const guests = await internalService.getGuestsByIds(req.token, guestIds);
-
-  const mappedUsers = {};
-  users.forEach((user) => {
-    mappedUsers[user.id] = user;
-  });
-
-  const mappedGuests = {};
-  guests.forEach((guest) => {
-    mappedGuests[guest.id] = guest;
-  });
+  const { users, guests } = await internalService.getUsersAndGuests(req.token, usersIds, guestsIds);
 
   const mappedClaims = claims.map((claim) => ({
     ...claim,
-    user: mappedUsers[claim.user_id],
-    guest: mappedGuests[claim.guest_id] || null,
+    user: users[claim.user_id],
+    guest: guests[claim.guest_id] || null,
   }));
   res.json({ success: true, data: mappedClaims });
 };
@@ -48,7 +38,7 @@ const createClaim = async (req, res) => {
 
   let guestInfo = {};
   if (guest && guest.phone) {
-    guestInfo = await internalService.getOrCreateGuest(req.token, {
+    guestInfo = await authServiceApi.getOrCreateGuest(req.token, {
       name: guest.name,
       surname: guest.surname,
       phone: guest.phone,
@@ -64,6 +54,15 @@ const createClaim = async (req, res) => {
     arrival_time,
     user_id,
     guest_id: guestInfo.id || null,
+  });
+
+  historyActionsService.onClaimAction({
+    actionType: claim.guest_id ? 'ADMIN_CREATE_GUEST_CLAIM' : 'CREATE_CLAIM',
+    guestId: guestInfo.id,
+    userFromId: user_id,
+    date,
+    type,
+    token: req.token,
   });
 
   res.json({ success: true, data: claim });
@@ -83,7 +82,7 @@ const updateClaim = async (req, res) => {
     return res.status(404).json({ success: false, error: ERRORS.CLAIM_NOT_FOUND });
   }
 
-  const user = await internalService.getUser(req.token);
+  const user = await authServiceApi.getUser(req.token);
   if (user.id !== claim.user_id) {
     return res.status(403).json({ success: false, error: ERRORS.UPDATE_NOT_YOURS_CLAIM_ERROR });
   }
@@ -104,12 +103,22 @@ const deleteClaim = async (req, res) => {
     return res.status(404).json({ success: false, error: ERRORS.CLAIM_NOT_FOUND });
   }
 
-  const user = await internalService.getUser(req.token);
+  const user = await authServiceApi.getUser(req.token);
   if (user.id !== claim.user_id) {
     return res.status(403).json({ success: false, error: ERRORS.DELETE_NOT_YOURS_CLAIM_ERROR });
   }
 
   await claimRepository.deleteById(claimId);
+
+  historyActionsService.onClaimAction({
+    actionType: claim.guest_id ? 'ADMIN_DELETE_GUEST_CLAIM' : 'DELETE_CLAIM',
+    guestId: claim.guest_id,
+    userFromId: claim.user_id,
+    date: claim.date,
+    type: claim.type,
+    token: req.token,
+  });
+
   res.status(204).send();
 };
 

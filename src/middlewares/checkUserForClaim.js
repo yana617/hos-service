@@ -1,4 +1,4 @@
-const { getUser } = require('../services/internal');
+const { getUser } = require('../api/authService');
 const checkPermissions = require('./checkPermissions');
 const { ERRORS } = require('../translates');
 
