@@ -12,6 +12,9 @@ const {
 const app = require('../../app');
 const { ERRORS } = require('../translates');
 
+jest.mock('../services/historyAction');
+const historyActionService = require('../services/historyAction');
+
 const { AUTH_SERVICE_URL } = process.env;
 const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
 const userId = '9d2d4fde-d439-4b92-9b41-208f2327200b';
@@ -19,6 +22,10 @@ const userId = '9d2d4fde-d439-4b92-9b41-208f2327200b';
 beforeEach(async () => {
   await setupDatabase();
   nock.cleanAll();
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
 });
 
 describe('GET /claims request', () => {
@@ -41,9 +48,13 @@ describe('GET /claims request', () => {
     await new Claim(generateClaim()).save();
     await new Claim(generateClaim()).save();
 
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
     const response = await request(app)
       .get('/claims')
       .expect(200);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(0);
 
     const { data: claims } = response.body;
     expect(claims.length).toBe(2);
@@ -129,11 +140,15 @@ describe('POST /claims/ request', () => {
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
     const claimOne = { ...generateClaim(), user_id: userId };
 
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
     const response = await request(app)
       .post('/claims')
       .set('x-access-token', 'valid token')
       .send(claimOne)
       .expect(200);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(1);
 
     const { data: claim } = response.body;
     expect(claim).toHaveProperty('type', claimOne.type);
@@ -161,11 +176,15 @@ describe('POST /claims/ request', () => {
       },
     };
 
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
     const response = await request(app)
       .post('/claims')
       .set('x-access-token', 'valid token')
       .send(claimOne)
       .expect(200);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(1);
 
     const { data: claim } = response.body;
     expect(claim).toHaveProperty('type', claimOne.type);
@@ -373,10 +392,14 @@ describe('DELETE /claims/:claimId request', () => {
     const claimOne = generateClaim();
     await new Claim({ ...claimOne, user_id: userId }).save();
 
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
     await request(app)
       .delete(`/claims/${claimOne._id}`)
       .set('x-access-token', 'valid token')
       .expect(204);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(1);
 
     const claimInDB = await Claim.findById(claimOne._id);
     expect(claimInDB).toBeNull();

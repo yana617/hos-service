@@ -7,16 +7,19 @@ const Notice = require('../../models/notice');
 const Claim = require('../../models/claim');
 const HistoryAction = require('../../models/historyAction');
 
-const generateNotice = () => ({
+const generateNotice = (internalOnly) => ({
   _id: new mongoose.Types.ObjectId(),
   title: faker.lorem.words(3),
   description: faker.lorem.words(15),
-  internalOnly: faker.datatype.boolean(),
+  internalOnly: typeof internalOnly === 'boolean' ? internalOnly : faker.datatype.boolean(),
 });
 
 const generateHistoryAction = (action_type = 'CREATE_CLAIM') => ({
   _id: new mongoose.Types.ObjectId(),
   action_type,
+  user_from_id: v4(),
+  claim_date: new Date(),
+  claim_type: 'morning',
 });
 
 const generateGuest = () => ({

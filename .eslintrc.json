@@ -42,6 +42,7 @@
       {
         "args": "none"
       }
-    ]
+    ],
+    "import/prefer-default-export": "off"
   }
 }

@@ -51,7 +51,7 @@ describe('GET /notices request', () => {
     expect(notices.length).toBe(2);
   });
 
-  test('Should return correct notices', async () => {
+  test('Should return correct notices without permissions', async () => {
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: [] });
     await new Notice(generateNotice(false)).save();
     await new Notice(generateNotice(true)).save();
