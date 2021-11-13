@@ -15,8 +15,8 @@ const { ERRORS } = require('../translates');
 jest.mock('../services/historyAction');
 const historyActionService = require('../services/historyAction');
 
-const { AUTH_SERVICE_URL } = process.env;
-const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const { DOCKER_AUTH_SERVICE_URL } = process.env;
+const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}:1081/internal`;
 const userId = '9d2d4fde-d439-4b92-9b41-208f2327200b';
 
 beforeEach(async () => {

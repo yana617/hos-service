@@ -1,7 +1,7 @@
 const got = require('got');
 
-const { AUTH_SERVICE_URL } = process.env;
-const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const { DOCKER_AUTH_SERVICE_URL } = process.env;
+const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}:1081/internal`;
 
 const getOptions = (token, body = {}) => ({
   headers: { 'x-access-token': token },

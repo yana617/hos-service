@@ -3,8 +3,8 @@ const nock = require('nock');
 const { mapUsersIntoHistoryAction } = require('../../utils/historyActionEmitter');
 const internalService = require('../../services/internal');
 
-const { AUTH_SERVICE_URL } = process.env;
-const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const { DOCKER_AUTH_SERVICE_URL } = process.env;
+const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}:1081/internal`;
 
 afterEach(() => {
   jest.clearAllMocks();

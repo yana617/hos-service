@@ -7,8 +7,8 @@ const app = require('../../app');
 const { ERRORS } = require('../translates');
 const { emitter } = require('../utils/historyActionEmitter');
 
-const { AUTH_SERVICE_URL, EVENT_KEY } = process.env;
-const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const { DOCKER_AUTH_SERVICE_URL, EVENT_KEY } = process.env;
+const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}:1081/internal`;
 
 jest.mock('../utils/historyActionEmitter');
 
