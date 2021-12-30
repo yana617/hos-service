@@ -15,7 +15,7 @@ const getActions = async (req, res) => {
   } = req.query;
 
   const total = await historyActionRepository.count();
-  let historyActions = await historyActionRepository.getAllFiltered({ limit, skip });
+  let historyActions = await historyActionRepository.getPaginated({ limit, skip });
 
   const usersIds = new Set();
   const guestIds = new Set();

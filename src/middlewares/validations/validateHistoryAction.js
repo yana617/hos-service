@@ -13,22 +13,24 @@ module.exports = checkSchema({
     isString: true,
     exists: true,
   },
-  user_from: {
+  user_from_id: {
     in: ['body'],
-    errorMessage: ERRORS.INVALID_USER_ID,
-    isLength: {
-      options: { min: 36, max: 36 },
+    isUUID: {
+      errorMessage: ERRORS.INVALID_USER_ID,
     },
-    isString: true,
+  },
+  user_to_id: {
+    in: ['body'],
+    isUUID: {
+      errorMessage: ERRORS.INVALID_USER_ID,
+    },
     optional: true,
   },
-  user_to: {
+  guest_to_id: {
     in: ['body'],
-    errorMessage: ERRORS.INVALID_USER_ID,
-    isLength: {
-      options: { min: 36, max: 36 },
+    isUUID: {
+      errorMessage: ERRORS.INVALID_GUEST_ID,
     },
-    isString: true,
     optional: true,
   },
   new_role: {

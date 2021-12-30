@@ -58,7 +58,7 @@ describe('GET /history-actions request', () => {
     expect(total).toBe(0);
   });
 
-  test('Should fail with not enough permissions for guest creation', async () => {
+  test('Should fail with not enough permissions', async () => {
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: [] });
 
     const response = await request(app)

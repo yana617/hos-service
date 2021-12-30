@@ -33,7 +33,7 @@ const historyActionSchema = new mongoose.Schema({
 });
 
 historyActionSchema.statics = {
-  async getAllFiltered({ skip, limit }) {
+  async getPaginated({ skip, limit }) {
     return this.aggregate([
       {
         $sort: {
