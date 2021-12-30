@@ -1,6 +1,6 @@
 const { ERRORS } = require('../translates');
 const noticeRepository = require('../repositories/NoticeRepository');
-const { getPermissions } = require('../services/internal');
+const { getPermissions } = require('../api/authService');
 
 const createNotice = async (req, res) => {
   const { title, description, internalOnly } = req.body;

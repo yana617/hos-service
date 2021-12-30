@@ -1,5 +1,5 @@
 const { ERRORS } = require('../translates');
-const { checkAuth } = require('../services/internal');
+const { checkAuth } = require('../api/authService');
 
 module.exports = async (req, res, next) => {
   try {

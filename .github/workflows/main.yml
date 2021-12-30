@@ -35,3 +35,5 @@ jobs:
           MONGO_HOSTNAME: localhost
           MONGO_PORT: 27017
           MONGO_DB: test-db
+          EVENT_KEY: event-key
+          DOCKER_AUTH_SERVICE_URL: http://example.com

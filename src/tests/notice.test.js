@@ -6,8 +6,8 @@ const { generateNotice, setupDatabase } = require('./fixtures/db');
 const app = require('../../app');
 const { ERRORS } = require('../translates');
 
-const { AUTH_SERVICE_URL } = process.env;
-const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const { DOCKER_AUTH_SERVICE_URL } = process.env;
+const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}:1081/internal`;
 
 beforeEach(async () => {
   await setupDatabase();
@@ -51,7 +51,7 @@ describe('GET /notices request', () => {
     expect(notices.length).toBe(2);
   });
 
-  test('Should return correct notices', async () => {
+  test('Should return correct notices without permissions', async () => {
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: [] });
     await new Notice(generateNotice(false)).save();
     await new Notice(generateNotice(true)).save();

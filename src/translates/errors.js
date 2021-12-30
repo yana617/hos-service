@@ -25,6 +25,7 @@ module.exports = {
     CLAIM_NOT_FOUND: 'Claim not found',
     UPDATE_NOT_YOURS_CLAIM_ERROR: 'Can not update not yours claim',
     DELETE_NOT_YOURS_CLAIM_ERROR: 'Can not delete not yours claim',
+    INVALID_GUEST_ID: 'Guest id should be an uuid',
   },
   RU: {
     NOTICE_NOT_FOUND: 'Запись не найдена',
@@ -33,7 +34,7 @@ module.exports = {
     TOKEN_REQUIRED: 'Для аутентификации требуется токен доступа',
     INVALID_DATE: 'Неверно указана дата',
     INVALID_CLAIM_TYPE: 'Неверный тип смены',
-    INVALID_USER_ID: 'Нереный идентификатор пользователя',
+    INVALID_USER_ID: 'Неверный идентификатор пользователя',
     INVALID_ARRIVAL_TIME: 'Неверно указано время прибытия на смену',
     ADDITIONAL_PEOPLE_ERROR: 'Неверно указанно число дополнительных людей',
     INVALID_COMMENT: 'Некорректно заполнено поле для комментария',
@@ -50,5 +51,6 @@ module.exports = {
     CREATE_NOT_YOURS_CLAIM_ERROR: 'Записываться в график можно только за себя',
     FORBIDDEN: 'Недостаточно прав',
     CLAIM_NOT_FOUND: 'Запись не найдена',
+    INVALID_GUEST_ID: 'Неверный идентификатор гостя',
   },
 };

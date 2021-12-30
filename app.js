@@ -13,7 +13,19 @@ const app = express();
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-const whitelist = ['http://localhost:8080', 'hos-service:1082', 'https://house-of-souls.dogcatbmpz.by'];
+app.use((req, res, next) => {
+  req.headers.origin = req.headers.origin || req.headers.host;
+  next();
+});
+
+const {
+  UI_LOCAL_URL,
+  UI_PROD_URL,
+  DOCKER_HOS_SERVICE_URL,
+  AUTH_SERVICE_PROD_URL,
+} = process.env;
+
+const whitelist = [UI_LOCAL_URL, UI_PROD_URL, DOCKER_HOS_SERVICE_URL, AUTH_SERVICE_PROD_URL];
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1) {

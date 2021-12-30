@@ -5,6 +5,22 @@ const { v4 } = require('uuid');
 
 const Notice = require('../../models/notice');
 const Claim = require('../../models/claim');
+const HistoryAction = require('../../models/historyAction');
+
+const generateNotice = (internalOnly) => ({
+  _id: new mongoose.Types.ObjectId(),
+  title: faker.lorem.words(3),
+  description: faker.lorem.words(15),
+  internalOnly: typeof internalOnly === 'boolean' ? internalOnly : faker.datatype.boolean(),
+});
+
+const generateHistoryAction = (action_type = 'CREATE_CLAIM') => ({
+  _id: new mongoose.Types.ObjectId(),
+  action_type,
+  user_from_id: v4(),
+  claim_date: new Date(),
+  claim_type: 'morning',
+});
 
 const generateGuest = () => ({
   id: v4(),
@@ -19,13 +35,6 @@ const generateUser = () => ({
   birthday: new Date(),
 });
 
-const generateNotice = (internalOnly = faker.datatype.boolean()) => ({
-  _id: new mongoose.Types.ObjectId(),
-  title: faker.lorem.words(3),
-  description: faker.lorem.words(15),
-  internalOnly,
-});
-
 const generateClaim = (date) => ({
   _id: new mongoose.Types.ObjectId(),
   date: date ? new Date(date) : new Date(),
@@ -33,13 +42,13 @@ const generateClaim = (date) => ({
   user_id: v4(),
 });
 
-const setupDatabase = async () => {
-  await Promise.all([Notice.deleteMany(), Claim.deleteMany()]);
-};
+const setupDatabase = async () => Promise
+  .all([Notice.deleteMany(), HistoryAction.deleteMany(), Claim.deleteMany()]);
 
 module.exports = {
   setupDatabase,
   generateNotice,
+  generateHistoryAction,
   generateClaim,
   generateUser,
   generateGuest,

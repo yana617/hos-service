@@ -1,40 +1,25 @@
-const got = require('got');
+const authServiceApi = require('../api/authService');
 
-const { AUTH_SERVICE_URL } = process.env;
-const baseUrl = `http://${AUTH_SERVICE_URL}:1081/internal`;
+const getUsersAndGuests = async (token, usersIds, guestsIds) => {
+  const users = await authServiceApi.getUsersByIds(token, usersIds);
+  let guests = [];
+  if (guestsIds && guestsIds.length > 0) {
+    guests = await authServiceApi.getGuestsByIds(token, guestsIds);
+  }
 
-const getOptions = (token, body = {}) => ({
-  headers: { 'x-access-token': token },
-  json: true,
-  body,
-});
+  const mappedUsers = {};
+  users.forEach((user) => {
+    mappedUsers[user.id] = user;
+  });
 
-exports.checkAuth = async (token) => {
-  const response = await got.get(`${baseUrl}/auth`, getOptions(token));
-  return response.body;
+  const mappedGuests = {};
+  guests.forEach((guest) => {
+    mappedGuests[guest.id] = guest;
+  });
+
+  return { users: mappedUsers, guests: mappedGuests };
 };
 
-exports.getUser = async (token) => {
-  const response = await got.get(`${baseUrl}/users/me`, getOptions(token));
-  return response.body.data;
-};
-
-exports.getPermissions = async (token) => {
-  const response = await got.get(`${baseUrl}/permissions/me`, getOptions(token));
-  return response.body.data;
-};
-
-exports.getUsersByIds = async (token, usersIds) => {
-  const response = await got.post(`${baseUrl}/users`, getOptions(token, { ids: usersIds }));
-  return response.body.data;
-};
-
-exports.getGuestsByIds = async (token, guestIds) => {
-  const response = await got.post(`${baseUrl}/guests`, getOptions(token, { ids: guestIds }));
-  return response.body.data;
-};
-
-exports.getOrCreateGuest = async (token, body) => {
-  const response = await got.post(`${baseUrl}/guest`, getOptions(token, body));
-  return response.body.data;
+module.exports = {
+  getUsersAndGuests,
 };
