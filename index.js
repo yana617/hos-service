@@ -1,6 +1,7 @@
 const http = require('http');
 const { Server } = require('socket.io');
 const app = require('./app');
+const { startEmitter } = require('./src/utils/historyActionEmitter');
 
 const { UI_PROD_URL } = process.env;
 
@@ -16,7 +17,7 @@ app.io = io;
 
 require('./src/database/connect');
 
-require('./src/utils/historyActionEmitter').startEmitter(io);
+startEmitter(io);
 
 server.listen(process.env.PORT || 1082, () => {
   console.log(`[*] Server started on port ${server.address().port}`);
