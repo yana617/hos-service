@@ -11,7 +11,7 @@ const generateOptions = (from, to) => {
   }
   if (to) {
     const toDate = new Date(to);
-    toDate.setHours(24);
+    toDate.setHours(24, 0, 0);
     if (!options.date) {
       options.date = {};
     }
