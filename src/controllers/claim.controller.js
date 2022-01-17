@@ -104,7 +104,7 @@ const deleteClaim = async (req, res) => {
   }
 
   const user = await authServiceApi.getUser(req.token);
-  if (user.id !== claim.user_id) {
+  if (user.role !== 'ADMIN' && user.id !== claim.user_id) {
     return res.status(403).json({ success: false, error: ERRORS.DELETE_NOT_YOURS_CLAIM_ERROR });
   }
 
