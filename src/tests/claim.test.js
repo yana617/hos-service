@@ -420,7 +420,7 @@ describe('DELETE /claims/:claimId request', () => {
   });
 
   test('Should fail because you try to delete not yours claim', async () => {
-    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: 'not my id' } });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: 'notUserFromClaim', role: 'USER' } });
     const claimOne = generateClaim();
     await new Claim({ ...claimOne, user_id: userId }).save();
 
@@ -431,5 +431,19 @@ describe('DELETE /claims/:claimId request', () => {
 
     const { error } = response.body;
     expect(error).toBe(ERRORS.DELETE_NOT_YOURS_CLAIM_ERROR);
+  });
+
+  test('Should successfully delete not yours claim when you are an admin', async () => {
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: 'notUserFromClaim', role: 'ADMIN' } });
+    const claimOne = generateClaim();
+    await new Claim({ ...claimOne, user_id: userId }).save();
+
+    await request(app)
+      .delete(`/claims/${claimOne._id}`)
+      .set('x-access-token', 'valid token')
+      .expect(204);
+
+    const claimInDB = await Claim.findById(claimOne._id);
+    expect(claimInDB).toBeNull();
   });
 });
