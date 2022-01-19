@@ -5,7 +5,7 @@ const { ERRORS } = require('../../translates');
 const { setupDatabase } = require('../fixtures/db');
 
 const { DOCKER_AUTH_SERVICE_URL } = process.env;
-const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}:1081/internal`;
+const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}/internal`;
 
 beforeEach(setupDatabase);
 
