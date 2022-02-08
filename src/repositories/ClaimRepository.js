@@ -26,9 +26,10 @@ class ClaimRepository extends BaseRepository {
     return this.model.find(options).lean();
   }
 
-  async getClaimsByUserId(userId) {
+  async getClaimsByUserIdWithoutGuests(userId) {
     return this.model.find({
       user_id: userId,
+      guest_id: null,
     });
   }
 }
