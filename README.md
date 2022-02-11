@@ -10,7 +10,18 @@ docker compose up --build
 npm run test:docker
 ```
 
-### Updating swagger
+</br>
+
+## Swagger
+
+### View
+
+```
+{{host}}/docs // host example - localhost:1082
+```
+
+### Updating
+
 Add new swagger path or schema files in **documentation/** folder
 
 Then run

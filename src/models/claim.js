@@ -36,4 +36,54 @@ const claimSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+claimSchema.statics = {
+  async getClaimsFromDateToToday({ fromDate }) {
+    return this.aggregate([
+      {
+        $match: {
+          date: {
+            $gte: fromDate,
+          },
+          guest_id: null,
+        },
+      },
+      {
+        $sort: {
+          date: -1,
+        },
+      },
+      {
+        $group: {
+          _id: '$user_id',
+          lastDate: { $first: '$date' },
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          claimsCount: '$count',
+          lastDate: '$lastDate',
+        },
+      },
+      {
+        $sort: {
+          claimsCount: -1,
+          lastDate: -1,
+        },
+      },
+    ]);
+  },
+};
+
+claimSchema.methods = {
+  toJSON() {
+    const claim = this.toObject();
+    return claim;
+  },
+};
+
 module.exports = mongoose.model('Claim', claimSchema);

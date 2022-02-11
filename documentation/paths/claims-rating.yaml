@@ -1,0 +1,43 @@
+get:
+  summary: Get claims rating
+  tags:
+    - "Claims"
+  security:
+  - AccessTokenAuth: [] 
+  responses:
+    "200":
+      description: Returns claims rating for last month, last year and all time
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  allTime:
+                    type: array
+                    items:
+                      $ref: "../schemas/ClaimRating.yaml"
+                  year:
+                    type: array
+                    items:
+                      $ref: "../schemas/ClaimRating.yaml"
+                  month:
+                    type: array
+                    items:
+                      $ref: "../schemas/ClaimRating.yaml"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"
+    "403":
+      description: Forbidden when do not have permission to view rating
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"

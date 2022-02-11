@@ -25,6 +25,8 @@ paths:
     $ref: "./paths/claim.yaml"
   /users/{userId}/claims:
     $ref: "./paths/user-claims.yaml"
+  /claims/rating:
+    $ref: "./paths/claims-rating.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:

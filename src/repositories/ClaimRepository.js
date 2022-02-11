@@ -32,6 +32,12 @@ class ClaimRepository extends BaseRepository {
       guest_id: null,
     });
   }
+
+  async getClaimsFromDateToToday(fromDate = new Date('2000-01')) {
+    return this.model.getClaimsFromDateToToday({
+      fromDate,
+    });
+  }
 }
 
 module.exports = new ClaimRepository(Claim);
