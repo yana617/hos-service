@@ -3,6 +3,7 @@ const authServiceApi = require('../api/authService');
 const { ERRORS } = require('../translates');
 const historyActionsService = require('../services/historyAction');
 const internalService = require('../services/internal');
+const claimsService = require('../services/claim');
 
 const getClaims = async (req, res) => {
   const { from, to } = req.query;
@@ -122,9 +123,40 @@ const deleteClaim = async (req, res) => {
   res.status(204).send();
 };
 
+const getClaimsRating = async (req, res) => {
+  let allTimeUsersRating = await claimRepository.getUsersRatingFromClaimsFromDateToToday();
+
+  const usersIds = allTimeUsersRating.map((user) => user.id);
+  const { users } = await internalService.getUsersAndGuests(req.token, usersIds, []);
+
+  allTimeUsersRating = claimsService.mapUsersIntoUsersRating(allTimeUsersRating, users);
+
+  let today = new Date();
+  const yearAgoDate = new Date(today.setFullYear(today.getFullYear() - 1));
+  let yearUsersRating = await claimRepository
+    .getUsersRatingFromClaimsFromDateToToday(yearAgoDate);
+  yearUsersRating = claimsService.mapUsersIntoUsersRating(yearUsersRating, users);
+
+  today = new Date();
+  const monthAgoDate = new Date(today.setMonth(today.getMonth() - 1));
+  let monthUsersRating = await claimRepository
+    .getUsersRatingFromClaimsFromDateToToday(monthAgoDate);
+  monthUsersRating = claimsService.mapUsersIntoUsersRating(monthUsersRating, users);
+
+  res.json({
+    success: true,
+    data: {
+      allTime: allTimeUsersRating,
+      year: yearUsersRating,
+      month: monthUsersRating,
+    },
+  });
+};
+
 module.exports = {
   getClaims,
   createClaim,
   updateClaim,
   deleteClaim,
+  getClaimsRating,
 };

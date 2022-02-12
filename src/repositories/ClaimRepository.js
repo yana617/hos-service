@@ -1,6 +1,8 @@
 const Claim = require('../models/claim');
 const BaseRepository = require('./BaseRepository');
 
+const SOME_OLD_DATE = new Date('2000-01');
+
 const generateOptions = (from, to) => {
   const options = {};
   if (from) {
@@ -30,6 +32,12 @@ class ClaimRepository extends BaseRepository {
     return this.model.find({
       user_id: userId,
       guest_id: null,
+    });
+  }
+
+  async getUsersRatingFromClaimsFromDateToToday(fromDate = SOME_OLD_DATE) {
+    return this.model.getUsersRatingFromClaimsFromDateToToday({
+      fromDate,
     });
   }
 }

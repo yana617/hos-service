@@ -6,4 +6,6 @@ Notice:
   $ref: "./Notice.yaml"
 Claim:
   $ref: "./Claim.yaml"
+ClaimRating:
+  $ref: "./ClaimRating.yaml"
   
