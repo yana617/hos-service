@@ -124,29 +124,31 @@ const deleteClaim = async (req, res) => {
 };
 
 const getClaimsRating = async (req, res) => {
-  let allTime = await claimRepository.getClaimsFromDateToToday();
+  let allTimeUsersRating = await claimRepository.getUsersRatingFromClaimsFromDateToToday();
 
-  const usersIds = allTime.map((user) => user.id);
+  const usersIds = allTimeUsersRating.map((user) => user.id);
   const { users } = await internalService.getUsersAndGuests(req.token, usersIds, []);
 
-  allTime = claimsService.mapUsersIntoClaimsRating(allTime, users);
+  allTimeUsersRating = claimsService.mapUsersIntoUsersRating(allTimeUsersRating, users);
 
   let today = new Date();
   const yearAgoDate = new Date(today.setFullYear(today.getFullYear() - 1));
-  let year = await claimRepository.getClaimsFromDateToToday(yearAgoDate);
-  year = claimsService.mapUsersIntoClaimsRating(year, users);
+  let yearUsersRating = await claimRepository
+    .getUsersRatingFromClaimsFromDateToToday(yearAgoDate);
+  yearUsersRating = claimsService.mapUsersIntoUsersRating(yearUsersRating, users);
 
   today = new Date();
   const monthAgoDate = new Date(today.setMonth(today.getMonth() - 1));
-  let month = await claimRepository.getClaimsFromDateToToday(monthAgoDate);
-  month = claimsService.mapUsersIntoClaimsRating(month, users);
+  let monthUsersRating = await claimRepository
+    .getUsersRatingFromClaimsFromDateToToday(monthAgoDate);
+  monthUsersRating = claimsService.mapUsersIntoUsersRating(monthUsersRating, users);
 
   res.json({
     success: true,
     data: {
-      allTime,
-      year,
-      month,
+      allTime: allTimeUsersRating,
+      year: yearUsersRating,
+      month: monthUsersRating,
     },
   });
 };

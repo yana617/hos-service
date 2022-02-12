@@ -1,4 +1,4 @@
-const mapUsersIntoClaimsRating = (claimsRating, usersInfo) => claimsRating.map((user) => {
+const mapUsersIntoUsersRating = (usersRating, usersInfo) => usersRating.map((user) => {
   if (usersInfo[user.id]) {
     return { ...user, fullName: `${usersInfo[user.id].name} ${usersInfo[user.id].surname}` };
   }
@@ -6,5 +6,5 @@ const mapUsersIntoClaimsRating = (claimsRating, usersInfo) => claimsRating.map((
 });
 
 module.exports = {
-  mapUsersIntoClaimsRating,
+  mapUsersIntoUsersRating,
 };

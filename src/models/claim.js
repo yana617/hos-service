@@ -37,7 +37,7 @@ const claimSchema = new mongoose.Schema({
 });
 
 claimSchema.statics = {
-  async getClaimsFromDateToToday({ fromDate }) {
+  async getUsersRatingFromClaimsFromDateToToday({ fromDate }) {
     return this.aggregate([
       {
         $match: {
@@ -66,7 +66,7 @@ claimSchema.statics = {
           _id: 0,
           id: '$_id',
           claimsCount: '$count',
-          lastDate: '$lastDate',
+          lastDate: 1,
         },
       },
       {

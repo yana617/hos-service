@@ -487,6 +487,45 @@ describe('GET /claims/rating request', () => {
     expect(month.length).toBe(2);
   });
 
+  test('Should return rating correctly with different claims count', async () => {
+    const userOne = generateUser();
+    const userTwo = generateUser();
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['VIEW_RATING'] });
+
+    await new Claim({ ...generateClaim(getDateExcludeMonth(20)), user_id: userOne.id }).save();
+    await new Claim({ ...generateClaim(getDateExcludeMonth(15)), user_id: userOne.id }).save();
+    await new Claim({ ...generateClaim(getDateExcludeMonth(10)), user_id: userOne.id }).save();
+    await new Claim({ ...generateClaim(getDateExcludeMonth(5)), user_id: userTwo.id }).save();
+    await new Claim({ ...generateClaim(getDateExcludeMonth(0)), user_id: userTwo.id }).save();
+
+    const response = await request(app)
+      .get('/claims/rating')
+      .set('x-access-token', 'valid token')
+      .expect(200);
+
+    const { data: { allTime, year, month } } = response.body;
+
+    expect(allTime.length).toBe(2);
+
+    expect(allTime[0].id).toBe(userOne.id);
+    expect(allTime[0].claimsCount).toBe(3);
+    expect(allTime[1].id).toBe(userTwo.id);
+    expect(allTime[1].claimsCount).toBe(2);
+
+    expect(year.length).toBe(2);
+
+    expect(year[0].id).toBe(userTwo.id);
+    expect(year[0].claimsCount).toBe(2);
+    expect(year[1].id).toBe(userOne.id);
+    expect(year[1].claimsCount).toBe(1);
+
+    expect(month.length).toBe(1);
+
+    expect(month[0].id).toBe(userTwo.id);
+    expect(month[0].claimsCount).toBe(1);
+  });
+
   test('Should return rating correctly by dates', async () => {
     nock(baseUrl).get('/auth').reply(200, { success: true });
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['VIEW_RATING'] });
@@ -511,16 +550,11 @@ describe('GET /claims/rating request', () => {
     nock(baseUrl).get('/auth').reply(200, { success: true });
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['VIEW_RATING'] });
 
-    const today = new Date();
-    const twoYearsAgoDate = new Date(today.setFullYear(today.getFullYear() - 2));
-    await new Claim({ ...generateClaim(twoYearsAgoDate), user_id: userId }).save();
+    await new Claim({ ...generateClaim(getDateExcludeMonth(24)), user_id: userId }).save();
+    await new Claim({ ...generateClaim(getDateExcludeMonth(6)), user_id: userId }).save();
 
-    const today2 = new Date();
-    const sixMonthAgoDate = new Date(today2.setMonth(today2.getMonth() - 6));
-    await new Claim({ ...generateClaim(sixMonthAgoDate), user_id: userId }).save();
-
-    const claimThree = generateClaim();
-    await new Claim(claimThree).save();
+    const thirdClaim = generateClaim();
+    await new Claim(thirdClaim).save();
 
     const response = await request(app)
       .get('/claims/rating')
@@ -532,7 +566,7 @@ describe('GET /claims/rating request', () => {
     expect(year.length).toBe(2);
     expect(month.length).toBe(1);
 
-    expect(month[0].id).toBe(claimThree.user_id);
+    expect(month[0].id).toBe(thirdClaim.user_id);
   });
 
   test('Should map users into claims correctly', async () => {
@@ -583,7 +617,7 @@ describe('GET /claims/rating request', () => {
     expect(allTime[0].id).toBe(userTwo.id);
     expect(allTime[0].claimsCount).toBe(2);
     expect(allTime[1].id).toBe(userOne.id);
-    expect(allTime[0].claimsCount).toBe(2);
+    expect(allTime[1].claimsCount).toBe(2);
   });
 
   test('Should return users with last created claim first', async () => {
