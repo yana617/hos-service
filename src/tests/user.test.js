@@ -9,7 +9,7 @@ const { ERRORS } = require('../translates');
 
 const { DOCKER_AUTH_SERVICE_URL } = process.env;
 const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}/internal`;
-const userId = '9d2d4fde-d439-4b92-9b41-208f2327200b';
+const userId = v4();
 
 beforeEach(async () => {
   await setupDatabase();

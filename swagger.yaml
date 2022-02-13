@@ -458,6 +458,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /claims/rating:
+    get:
+      summary: Get claims rating
+      tags:
+        - Claims
+      security:
+        - AccessTokenAuth: []
+      responses:
+        '200':
+          description: 'Returns claims rating for last month, last year and all time'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      allTime:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ClaimRating'
+                      year:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ClaimRating'
+                      month:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ClaimRating'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden when do not have permission to view rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     AccessTokenAuth:
@@ -530,3 +574,13 @@ components:
         guest_id:
           type: string
           format: uuid
+    ClaimRating:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+        claimsCount:
+          type: number
