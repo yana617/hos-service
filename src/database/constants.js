@@ -5,6 +5,7 @@ exports.historyActionTypes = [
   'NEW_USER',
   'ADMIN_CREATE_GUEST_CLAIM',
   'ADMIN_DELETE_GUEST_CLAIM',
+  'ADMIN_DELETE_VOLUNTEER_CLAIM',
 ];
 
 exports.claimTypes = [

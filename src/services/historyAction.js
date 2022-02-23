@@ -5,6 +5,7 @@ const onClaimAction = ({
   actionType,
   guestId,
   userFromId,
+  userToId,
   date,
   type,
 }) => {
@@ -17,6 +18,8 @@ const onClaimAction = ({
   };
   if (actionType === 'ADMIN_CREATE_GUEST_CLAIM' || actionType === 'ADMIN_DELETE_GUEST_CLAIM') {
     actionData.guest_to_id = guestId;
+  } else if (actionType === 'ADMIN_DELETE_VOLUNTEER_CLAIM') {
+    actionData.user_to_id = userToId;
   }
 
   emitter.emit('newHistoryAction', actionData);

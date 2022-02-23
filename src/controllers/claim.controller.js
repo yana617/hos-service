@@ -111,10 +111,18 @@ const deleteClaim = async (req, res) => {
 
   await claimRepository.deleteById(claimId);
 
+  let historyActionType = 'DELETE_CLAIM';
+  if (claim.guest_id) {
+    historyActionType = 'ADMIN_DELETE_GUEST_CLAIM';
+  } else if (user.id !== claim.user_id) {
+    historyActionType = 'ADMIN_DELETE_VOLUNTEER_CLAIM';
+  }
+
   historyActionsService.onClaimAction({
-    actionType: claim.guest_id ? 'ADMIN_DELETE_GUEST_CLAIM' : 'DELETE_CLAIM',
+    actionType: historyActionType,
     guestId: claim.guest_id,
-    userFromId: claim.user_id,
+    userFromId: user.id,
+    ...(user.id !== claim.user_id ? { userToId: claim.user_id } : {}),
     date: claim.date,
     type: claim.type,
     token: req.token,
