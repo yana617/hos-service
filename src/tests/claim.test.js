@@ -253,6 +253,34 @@ describe('POST /claims/ request', () => {
     expect(errors).toBeDefined();
   });
 
+  test('Should fail with guest validation errors (phone)', async () => {
+    nock(baseUrl).get('/auth').reply(200, { success: true });
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId } });
+    nock(baseUrl).get('/permissions/me').reply(200, {
+      success: true,
+      data: ['CREATE_CLAIM', 'CREATE_CLAIM_FOR_UNREGISTERED_USERS'],
+    });
+
+    const claimOne = {
+      ...generateClaim(),
+      user_id: userId,
+      guest: {
+        phone: 'aaabbbcccddd',
+        name: 'test',
+        surname: 'test',
+      },
+    };
+
+    const response = await request(app)
+      .post('/claims')
+      .set('x-access-token', 'invalid token')
+      .send(claimOne)
+      .expect(400);
+
+    const { errors } = response.body;
+    expect(errors).toBeDefined();
+  });
+
   test('Should fail with not yours error', async () => {
     nock(baseUrl).get('/auth').reply(200, { success: true });
     nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: 'not yours' } });
@@ -446,6 +474,79 @@ describe('DELETE /claims/:claimId request', () => {
 
     const claimInDB = await Claim.findById(claimOne._id);
     expect(claimInDB).toBeNull();
+  });
+
+  test('History actions: Should raise DELETE_CLAIM action type on delete own claim', async () => {
+    const expectedHistoryActionType = 'DELETE_CLAIM';
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId } });
+    const claimOne = generateClaim();
+    await new Claim({ ...claimOne, user_id: userId }).save();
+
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
+    await request(app)
+      .delete(`/claims/${claimOne._id}`)
+      .set('x-access-token', 'valid token')
+      .expect(204);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(1);
+    expect(onClaimActionSpy).toHaveBeenCalledWith({
+      actionType: expectedHistoryActionType,
+      date: claimOne.date,
+      token: 'valid token',
+      type: claimOne.type,
+      userFromId: userId,
+    });
+  });
+
+  test('History actions: Should raise ADMIN_DELETE_GUEST_CLAIM action type on delete guest claim', async () => {
+    const expectedHistoryActionType = 'ADMIN_DELETE_GUEST_CLAIM';
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId, role: 'ADMIN' } });
+    const claimOne = generateClaim();
+    const guestId = v4();
+    await new Claim({ ...claimOne, user_id: userId, guest_id: guestId }).save();
+
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
+    await request(app)
+      .delete(`/claims/${claimOne._id}`)
+      .set('x-access-token', 'valid token')
+      .expect(204);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(1);
+    expect(onClaimActionSpy).toHaveBeenCalledWith({
+      actionType: expectedHistoryActionType,
+      date: claimOne.date,
+      token: 'valid token',
+      type: claimOne.type,
+      guestId,
+      userFromId: userId,
+    });
+  });
+
+  test('History actions: Should raise ADMIN_DELETE_VOLUNTEER_CLAIM action type on delete other users claim', async () => {
+    const expectedHistoryActionType = 'ADMIN_DELETE_VOLUNTEER_CLAIM';
+    nock(baseUrl).get('/users/me').reply(200, { success: true, data: { id: userId, role: 'ADMIN' } });
+    const claimOne = generateClaim();
+    const volunteerId = v4();
+    await new Claim({ ...claimOne, user_id: volunteerId }).save();
+
+    const onClaimActionSpy = jest.spyOn(historyActionService, 'onClaimAction');
+
+    await request(app)
+      .delete(`/claims/${claimOne._id}`)
+      .set('x-access-token', 'valid token')
+      .expect(204);
+
+    expect(onClaimActionSpy).toHaveBeenCalledTimes(1);
+    expect(onClaimActionSpy).toHaveBeenCalledWith({
+      actionType: expectedHistoryActionType,
+      date: claimOne.date,
+      token: 'valid token',
+      type: claimOne.type,
+      userFromId: userId,
+      userToId: volunteerId,
+    });
   });
 });
 

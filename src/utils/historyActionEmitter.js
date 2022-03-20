@@ -18,7 +18,7 @@ const mapUsersIntoHistoryAction = async (newHistoryAction, token) => {
   if (['ADMIN_CREATE_GUEST_CLAIM', 'ADMIN_DELETE_GUEST_CLAIM'].includes(newHistoryAction.action_type)) {
     action.guest_to = guests[newHistoryAction.guest_to_id];
   }
-  if (newHistoryAction.action_type === 'EDIT_ROLE') {
+  if (['EDIT_ROLE', 'ADMIN_DELETE_VOLUNTEER_CLAIM'].includes(newHistoryAction.action_type)) {
     action.user_to = users[newHistoryAction.user_to_id];
   }
   return action;
