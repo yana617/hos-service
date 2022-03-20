@@ -108,6 +108,9 @@ module.exports = checkSchema({
       errorMessage: ERRORS.PHONE_FIELD_ERROR,
       options: { min: 12, max: 12 },
     },
+    isNumeric: {
+      errorMessage: ERRORS.PHONE_FIELD_ERROR,
+    },
     exists: true,
     optional: true,
   },
