@@ -31,14 +31,17 @@
     },
     "coveragePathIgnorePatterns": [
       "<rootDir>/src/models/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    }
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.12.1",
-    "got": "^9.6.0",
     "js-yaml": "^4.1.0",
     "mongoose": "^6.0.9",
     "morgan": "^1.10.0",
