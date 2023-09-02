@@ -1,5 +1,5 @@
 const { ERRORS } = require('../translates');
-const { checkAuth } = require('../api/authService');
+const authServiceApi = require('../api/authService');
 
 module.exports = async (req, res, next) => {
   try {
@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
     }
 
     try {
-      await checkAuth(req.token);
+      await authServiceApi.checkAuth(req.token);
     } catch (e) {
       return res.status(401).json({ success: false, error: ERRORS.AUTH_REQUIRED });
     }
