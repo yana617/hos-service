@@ -8,14 +8,6 @@ const {
   MONGODB_PASSWORD,
 } = process.env;
 
-console.log(
-  MONGO_HOSTNAME,
-  MONGO_PORT,
-  MONGODB_DATABASE,
-  MONGODB_USERNAME,
-  MONGODB_PASSWORD,
-);
-
 const url = `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGODB_DATABASE}`;
 
 mongoose.connect(url)
