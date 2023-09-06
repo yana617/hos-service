@@ -25,6 +25,9 @@ jobs:
         uses: supercharge/mongodb-github-action@1.6.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-username: root
+          mongodb-password: rootPassword
+          mongodb-db: test-db
       - name: Install dependencies
         run: |
           npm install
@@ -34,6 +37,8 @@ jobs:
         env:
           MONGO_HOSTNAME: localhost
           MONGO_PORT: 27017
-          MONGO_DB: test-db
+          MONGODB_USERNAME: root
+          MONGODB_PASSWORD: rootPassword
+          MONGODB_DATABASE: test-db
           EVENT_KEY: event-key
           DOCKER_AUTH_SERVICE_URL: http://example.com
