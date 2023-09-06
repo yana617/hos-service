@@ -21,6 +21,4 @@ services:
     container_name: mongo-db
     volumes:
       - ./db/:/data/db
-    env_file:
-      - .env
-    command: mongod --auth --quiet --logpath /dev/null 
+    command: mongod --quiet --logpath /dev/null 
