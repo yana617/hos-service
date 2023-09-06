@@ -13,6 +13,7 @@ services:
       - mongo-db
     env_file:
      - .env
+
   mongo-db:
     image: mongo
     ports:
