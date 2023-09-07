@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        mongodb-version: ['4.0', '4.4']
+        mongodb-version: ['4.4', '5.0']
         
     steps:
       - uses: actions/checkout@v2
@@ -22,9 +22,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.6.0
+        uses: supercharge/mongodb-github-action@1.9.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-db: test-db
       - name: Install dependencies
         run: |
           npm install
@@ -34,6 +35,6 @@ jobs:
         env:
           MONGO_HOSTNAME: localhost
           MONGO_PORT: 27017
-          MONGO_DB: test-db
+          MONGODB_DATABASE: test-db
           EVENT_KEY: event-key
           DOCKER_AUTH_SERVICE_URL: http://example.com

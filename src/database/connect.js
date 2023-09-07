@@ -3,17 +3,24 @@ const mongoose = require('mongoose');
 const {
   MONGO_HOSTNAME,
   MONGO_PORT,
-  MONGO_DB,
+  MONGODB_DATABASE,
+  MONGODB_USERNAME,
+  MONGODB_PASSWORD,
+  NODE_ENV,
 } = process.env;
 
-const url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`;
+let url = `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGODB_DATABASE}?authSource=admin`;
+
+if (NODE_ENV === 'test') {
+  url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGODB_DATABASE}`;
+}
 
 mongoose.connect(url)
   .then(() => {
-    if (process.env.NODE_ENV !== 'test') {
-      console.log(`[*] Connected to database ${MONGO_DB}`);
+    if (NODE_ENV !== 'test') {
+      console.log(`[*] Connected to database ${MONGODB_DATABASE}`);
     }
   })
   .catch((err) => {
-    console.log(`[*] Error during connecting to database ${MONGO_DB}, error:`, err.message);
+    console.log(`[*] Error during connecting to database ${MONGODB_DATABASE}, error:`, err);
   });
