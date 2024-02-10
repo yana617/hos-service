@@ -1,6 +1,6 @@
 const { ERRORS } = require('../translates');
 const noticeRepository = require('../repositories/NoticeRepository');
-const { getPermissions } = require('../api/authService');
+const authServiceApi = require('../api/authService');
 
 const createNotice = async (req, res) => {
   const { title, description, internalOnly } = req.body;
@@ -19,7 +19,7 @@ const getNotice = async (req, res) => {
 
 const getNoticesIds = async (req, res) => {
   const filter = {};
-  const userPermissions = await getPermissions(req.token);
+  const userPermissions = await authServiceApi.getPermissions(req.token);
   if (!userPermissions.includes('CREATE_CLAIM')) {
     filter.internalOnly = false;
   }

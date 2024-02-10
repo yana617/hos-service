@@ -1,10 +1,14 @@
 const nock = require('nock');
+const { v4 } = require('uuid');
 
 const { mapUsersIntoHistoryAction } = require('../../utils/historyActionEmitter');
 const internalService = require('../../services/internal');
 
 const { DOCKER_AUTH_SERVICE_URL } = process.env;
 const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}/internal`;
+
+const userFromId = v4();
+const guestToId = v4();
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -15,7 +19,7 @@ test('Should call getUsersAnsGuests with correct ids', async () => {
     .post('/users')
     .reply(200, {
       success: true,
-      data: [],
+      data: [{ id: userFromId }],
     });
   nock(baseUrl)
     .post('/guests')
@@ -24,8 +28,6 @@ test('Should call getUsersAnsGuests with correct ids', async () => {
       data: [],
     });
 
-  const userFromId = '1';
-  const guestToId = '2';
   const token = 'token';
   const actionMock = {
     action_type: 'ADMIN_CREATE_GUEST_CLAIM',

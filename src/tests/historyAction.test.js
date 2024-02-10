@@ -1,5 +1,6 @@
 const request = require('supertest');
 const nock = require('nock');
+const { v4 } = require('uuid');
 
 const HistoryAction = require('../models/historyAction');
 const { setupDatabase, generateHistoryAction } = require('./fixtures/db');
@@ -12,6 +13,8 @@ const baseUrl = `http://${DOCKER_AUTH_SERVICE_URL}/internal`;
 
 jest.mock('../utils/historyActionEmitter');
 
+const userId = v4();
+
 beforeEach(async () => {
   await setupDatabase();
   nock.cleanAll();
@@ -23,7 +26,7 @@ describe('GET /history-actions request', () => {
       .post('/users')
       .reply(200, {
         success: true,
-        data: [],
+        data: [{ id: userId }],
       });
     nock(baseUrl)
       .post('/guests')
@@ -35,8 +38,8 @@ describe('GET /history-actions request', () => {
 
   test('Should return history actions correctly', async () => {
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
-    await new HistoryAction(generateHistoryAction()).save();
-    await new HistoryAction(generateHistoryAction()).save();
+    await new HistoryAction({ ...generateHistoryAction(), user_from_id: userId }).save();
+    await new HistoryAction({ ...generateHistoryAction(), user_from_id: userId }).save();
 
     const response = await request(app)
       .get('/history-actions')
@@ -48,6 +51,9 @@ describe('GET /history-actions request', () => {
   });
 
   test('Should return empty array', async () => {
+    nock.cleanAll();
+    nock(baseUrl).post('/users').reply(200, { success: true, data: [] });
+    nock(baseUrl).post('/guests').reply(200, { success: true, data: [] });
     nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
     const response = await request(app)
       .get('/history-actions')
