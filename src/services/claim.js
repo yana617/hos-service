@@ -1,9 +1,9 @@
-const mapUsersIntoUsersRating = (usersRating, usersInfo) => usersRating.map((user) => {
-  if (usersInfo[user.id]) {
-    return { ...user, fullName: `${usersInfo[user.id].name} ${usersInfo[user.id].surname}` };
-  }
-  return { ...user, fullName: '-' };
-});
+const mapUsersIntoUsersRating = (usersRating, usersInfo) => usersRating.map((user) => ({
+  ...user,
+  fullName: usersInfo[user.id]
+    ? `${usersInfo[user.id].name} ${usersInfo[user.id].surname}`
+    : '-',
+}));
 
 module.exports = {
   mapUsersIntoUsersRating,
