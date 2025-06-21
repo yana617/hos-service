@@ -19,13 +19,21 @@ app.use((req, res, next) => {
 });
 
 const {
+  PORT,
   UI_LOCAL_URL,
   UI_PROD_URL,
+  UI_NEW_PROD_URL, // temporary
   DOCKER_HOS_SERVICE_URL,
   AUTH_SERVICE_PROD_URL,
 } = process.env;
 
-const whitelist = [UI_LOCAL_URL, UI_PROD_URL, DOCKER_HOS_SERVICE_URL, AUTH_SERVICE_PROD_URL];
+const whitelist = [UI_NEW_PROD_URL, UI_PROD_URL, DOCKER_HOS_SERVICE_URL, AUTH_SERVICE_PROD_URL];
+if (process.env.NODE_ENV !== 'production') {
+  const POSTMAN_URL = `localhost:${PORT}`;
+  whitelist.push(POSTMAN_URL);
+  whitelist.push(UI_LOCAL_URL);
+}
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (whitelist.indexOf(origin) !== -1) {
@@ -39,11 +47,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(cors(corsOptions));
-}
-
 if (process.env.NODE_ENV !== 'test') {
+  app.use(cors(corsOptions));
   app.use(morgan(':method [:status] :url  :response-time ms'));
 }
 
