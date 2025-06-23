@@ -3,12 +3,12 @@ const { Server } = require('socket.io');
 const app = require('./app');
 const { startEmitter } = require('./src/utils/historyActionEmitter');
 
-const { UI_PROD_URL } = process.env;
+const { UI_PROD_URL, UI_NEW_PROD_URL } = process.env;
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: UI_PROD_URL,
+    origin: [UI_PROD_URL, UI_NEW_PROD_URL],
     methods: ['GET', 'POST'],
   },
 });
