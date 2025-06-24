@@ -9,7 +9,7 @@ const {
   NODE_ENV,
 } = process.env;
 
-let url = `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGODB_DATABASE}?authSource=admin`;
+let url = `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGODB_DATABASE}?authSource=${MONGODB_DATABASE}`;
 
 if (NODE_ENV === 'test') {
   url = `mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGODB_DATABASE}`;
