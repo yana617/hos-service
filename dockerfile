@@ -1,12 +1,12 @@
-FROM node:18.20.4
-LABEL maintainer="jana.ru.sidorova@yandex.ru"
+FROM node:22.16.0
+LABEL maintainer="jana.ru.sidorova@yandex.by"
 ENV NODE_ENV=production PORT=1082
 
 WORKDIR /usr/src/hos-service
 
 COPY package*.json ./
 
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY . .
 
