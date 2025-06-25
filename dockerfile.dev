@@ -1,14 +1,14 @@
-FROM node:18.20.4
-LABEL maintainer="jana.ru.sidorova@yandex.ru"
-ENV NODE_ENV=development PORT=1082
+FROM node:22.16.0
+LABEL maintainer="jana.ru.sidorova@yandex.by"
+ENV NODE_ENV=production PORT=1082
 
-WORKDIR /usr/src/hos-service
+WORKDIR /usr/src/hos-service-dev
 
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install
+RUN npm install --omit=dev
 
 COPY . .
 
 EXPOSE 1082
-CMD ["./node_modules/.bin/nodemon", "index.js"]
+CMD [ "npm", "start" ]
