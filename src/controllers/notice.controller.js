@@ -3,8 +3,15 @@ const noticeRepository = require('../repositories/NoticeRepository');
 const authServiceApi = require('../api/authService');
 
 const createNotice = async (req, res) => {
-  const { title, description, internalOnly } = req.body;
-  const newNotice = await noticeRepository.create({ title, description, internalOnly });
+  const {
+    title, description, internalOnly, animal_id,
+  } = req.body;
+  const newNotice = await noticeRepository.create({
+    title,
+    description,
+    internalOnly,
+    animal_id,
+  });
   res.json({ success: true, data: newNotice });
 };
 
@@ -12,13 +19,17 @@ const getNotice = async (req, res) => {
   const { id } = req.params;
   const notice = await noticeRepository.getById(id);
   if (!notice) {
-    return res.status(404).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
+    return res
+      .status(404)
+      .json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
   }
   res.json({ success: true, data: notice });
 };
 
 const getNoticesIds = async (req, res) => {
-  const filter = {};
+  const { animal_id } = req.query;
+
+  const filter = animal_id ? { animal_id } : {};
   const userPermissions = await authServiceApi.getPermissions(req.token);
   if (!userPermissions.includes('CREATE_CLAIM')) {
     filter.internalOnly = false;
@@ -30,20 +41,39 @@ const getNoticesIds = async (req, res) => {
 
 const updateNotice = async (req, res) => {
   const { id } = req.params;
-  const { title, description, internalOnly } = req.body;
-  const notice = await noticeRepository.update(id, { title, description, internalOnly });
+  const {
+    title,
+    description,
+    internalOnly,
+    animal_id,
+  } = req.body;
+
+  const notice = await noticeRepository.update(id, {
+    title,
+    description,
+    internalOnly,
+    animal_id,
+  });
+
   if (!notice) {
-    return res.status(404).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
+    return res
+      .status(404)
+      .json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
   }
+
   res.json({ success: true, data: notice });
 };
 
 const deleteNotice = async (req, res) => {
   const { id } = req.params;
   const notice = await noticeRepository.deleteById(id);
+
   if (!notice) {
-    return res.status(404).json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
+    return res
+      .status(404)
+      .json({ success: false, error: ERRORS.NOTICE_NOT_FOUND });
   }
+
   res.status(204).send();
 };
 

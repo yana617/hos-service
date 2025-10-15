@@ -8,3 +8,5 @@ properties:
     type: string
   internalOnly:
     type: boolean
+  animal_id:
+    type: string

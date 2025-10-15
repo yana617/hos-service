@@ -12,6 +12,7 @@ const generateNotice = (internalOnly) => ({
   title: faker.lorem.words(3),
   description: faker.lorem.words(15),
   internalOnly: typeof internalOnly === 'boolean' ? internalOnly : faker.datatype.boolean(),
+  animal_id: v4(),
 });
 
 const generateHistoryAction = (action_type = 'CREATE_CLAIM') => ({
