@@ -46,6 +46,8 @@ put:
               type: string
             internalOnly:
               type: boolean
+            animal_id:
+              type: string
   responses:
     "200":
       description: Returns edited notice

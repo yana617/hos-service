@@ -16,6 +16,9 @@ const noticeSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
+  animal_id: {
+    type: String,
+  },
 }, {
   timestamps: true,
 });
