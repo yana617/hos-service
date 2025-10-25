@@ -63,6 +63,19 @@ describe('GET /notices request', () => {
     const { data: notices } = response.body;
     expect(notices.length).toBe(1);
   });
+
+  test('Should return correct notices for animal', async () => {
+    nock(baseUrl).get('/permissions/me').reply(200, { success: true, data: ['CREATE_CLAIM'] });
+    const noticeOne = await new Notice(generateNotice(true)).save();
+    await new Notice(generateNotice(true)).save();
+
+    const response = await request(app)
+      .get(`/notices?animal_id=${noticeOne.animal_id}`)
+      .expect(200);
+
+    const { data: notices } = response.body;
+    expect(notices.length).toBe(1);
+  });
 });
 
 describe('GET /notices/:id request', () => {

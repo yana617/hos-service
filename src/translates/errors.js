@@ -27,6 +27,7 @@ module.exports = {
     DELETE_NOT_YOURS_CLAIM_ERROR: 'Can not delete not yours claim',
     INVALID_GUEST_ID: 'Guest id should be an uuid',
     EXTERNAL_SERVICE_ERROR: 'External service error',
+    INVALID_ANIMAL_ID: 'Invalid animal id',
   },
   RU: {
     NOTICE_NOT_FOUND: 'Запись не найдена',
@@ -54,5 +55,6 @@ module.exports = {
     CLAIM_NOT_FOUND: 'Запись не найдена',
     INVALID_GUEST_ID: 'Неверный идентификатор гостя',
     EXTERNAL_SERVICE_ERROR: 'Ошибка стороннего сервиса',
+    INVALID_ANIMAL_ID: 'Айди животного некорректное',
   },
 };

@@ -35,6 +35,8 @@ paths:
                   type: string
                 internalOnly:
                   type: boolean
+                animal_id:
+                  type: string
       responses:
         '201':
           description: Notice created successfully
@@ -126,6 +128,8 @@ paths:
                   type: string
                 internalOnly:
                   type: boolean
+                animal_id:
+                  type: string
       responses:
         '200':
           description: Returns edited notice
@@ -547,6 +551,8 @@ components:
           type: string
         internalOnly:
           type: boolean
+        animal_id:
+          type: string
     Claim:
       type: object
       properties:

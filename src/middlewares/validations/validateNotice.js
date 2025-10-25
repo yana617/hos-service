@@ -19,9 +19,11 @@ module.exports = checkSchema({
     },
     exists: true,
   },
-  internalOnly: {
+  animal_id: {
     in: ['body'],
-    isBoolean: true,
-    exists: true,
+    isUUID: {
+      errorMessage: ERRORS.INVALID_ANIMAL_ID,
+    },
+    optional: { options: { nullable: true } },
   },
 });
