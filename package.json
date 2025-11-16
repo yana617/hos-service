@@ -9,7 +9,8 @@
     "dev:docker": "docker compose up --build",
     "test": "jest --coverage --verbose --runInBand",
     "test:docker": "chmod +x ./bin/test.sh && NODE_ENV=test ./bin/test.sh",
-    "lint": "node_modules/.bin/eslint ."
+    "lint": "node_modules/.bin/eslint .",
+    "build:swagger": "swagger-cli bundle documentation/swagger.yaml --outfile swagger.yaml --type yaml"
   },
   "keywords": [
     "docker"

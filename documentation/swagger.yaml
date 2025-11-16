@@ -27,6 +27,8 @@ paths:
     $ref: "./paths/user-claims.yaml"
   /claims/rating:
     $ref: "./paths/claims-rating.yaml"
+  /stats/users-per-month:
+    $ref: "./paths/users-per-month.yaml"
 components:
   securitySchemes:
     AccessTokenAuth:
