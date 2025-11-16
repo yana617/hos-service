@@ -1,0 +1,31 @@
+get:
+  summary: Get stats - users per month
+  tags:
+    - "Stats"
+  security:
+  - AccessTokenAuth: [] 
+  responses:
+    "200":
+      description: Returns users per month stats (to generate chart)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    month:
+                      type: string
+                    usersCount:
+                      type: number
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Error.yaml"

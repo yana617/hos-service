@@ -40,6 +40,12 @@ class ClaimRepository extends BaseRepository {
       fromDate,
     });
   }
+
+  async getMonthlyUsersReport(fromDate = SOME_OLD_DATE) {
+    return this.model.getMonthlyUsersReport({
+      fromDate,
+    });
+  }
 }
 
 module.exports = new ClaimRepository(Claim);

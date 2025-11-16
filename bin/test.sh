@@ -1,4 +1,4 @@
-docker-compose up -d mongo-db
+docker compose up -d mongo-db
 
 export MONGO_PORT=27018
 export MONGO_HOSTNAME=localhost
@@ -9,4 +9,4 @@ npx browserslist@latest --update-db
 jest --coverage --runInBand
 echo "tearing down all containers"
 
-docker-compose stop
+docker compose stop
