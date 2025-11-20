@@ -1,4 +1,4 @@
-FROM node:22.16.0
+FROM node:22.21.1
 LABEL maintainer="jana.ru.sidorova@yandex.by"
 ENV NODE_ENV=production PORT=1082
 
